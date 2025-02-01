@@ -19,6 +19,9 @@
 			<li aria-current={page.url.pathname === '/' ? 'page' : undefined}>
 				<a href="/">Home</a>
 			</li>
+			<li aria-current={page.url.pathname.startsWith('/generate-qr') ? 'page' : undefined}>
+				<a href="/generate-qr">Generate QR</a>
+			</li>
 			<li aria-current={page.url.pathname.startsWith('/qr-scanner') ? 'page' : undefined}>
 				<a href="/qr-scanner">QR Scanner</a>
 			</li>

@@ -48,6 +48,7 @@
 	"dependencies": {
 		"drizzle-orm": "^0.38.4",
 		"jsqr": "^1.4.0",
-		"mysql2": "^3.12.0"
+		"mysql2": "^3.12.0",
+		"svelte-qrcode": "^1.0.1"
 	}
 }
