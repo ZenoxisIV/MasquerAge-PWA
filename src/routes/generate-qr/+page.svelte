@@ -17,6 +17,12 @@
 	let qrCodeData = "";
 
 	function generateQRCode() {
+		inputData.fName = inputData.fName.toUpperCase();
+		inputData.mName = inputData.mName.toUpperCase();
+		inputData.lName = inputData.lName.toUpperCase();
+
+		inputData.DOB = new Date(inputData.DOB).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
 		qrCodeData = JSON.stringify(
 			{ 
 				DateIssued: formatDate(new Date()),
