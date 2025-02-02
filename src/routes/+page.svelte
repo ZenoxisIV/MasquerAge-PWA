@@ -1,59 +1,101 @@
 <script lang="ts">
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcomeFallback from '$lib/images/svelte-welcome.png';
+	let uin: string = '';
+	let dateOfBirth: string = '';
+	let responseMessage: string = '';
+
+	async function validateID() {
+		let dob = new Date(dateOfBirth).toISOString().split('T')[0].replace(/-/g, '/');
+		try {
+			const response = await fetch('http://127.0.0.1:3000/dob', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ uin, dob })
+			});
+			const data = await response.json();
+			responseMessage = data.authStatus;
+		} catch (error) {
+			console.error('Error:', error);
+			responseMessage = 'An error occurred';
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<meta name="description" content="MOSIP ID Validation" />
 </svelte:head>
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcomeFallback} alt="Welcome" />
-			</picture>
-		</span>
+<section class="container">
+	<h1>MOSIP ID Validation</h1>
+	<div class="form-group">
+		<label for="uin">UIN:</label>
+		<input type="text" id="uin" bind:value={uin} placeholder="Enter your UIN" />
+	</div>
 
-		to your new<br />SvelteKit app
-	</h1>
+	<div class="form-group">
+		<label for="dob">Date of Birth:</label>
+		<input type="date" id="dob" bind:value={dateOfBirth} />
+	</div>
 
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
+	<button class="submit-button" on:click={validateID}>Submit</button>
 
-	<Counter />
+	<p class="response-message">{responseMessage}</p>
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
+	.container {
+		background: white;
+		padding: 2em;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		width: 100%;
+		max-width: 500px;
+		text-align: center;
+		margin: 0 auto;
 	}
 
 	h1 {
-		width: 100%;
+		margin-bottom: 1em;
+		color: #333;
 	}
 
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+	.form-group {
+		margin-bottom: 1em;
+		text-align: left;
 	}
 
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
+	label {
 		display: block;
+		margin-bottom: 0.5em;
+		color: #555;
+	}
+
+	input {
+		width: calc(100% - 1em);
+		padding: 0.5em;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+	}
+
+	.submit-button {
+		background-color: #007BFF;
+		color: white;
+		padding: 0.75em 1.5em;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 1em;
+	}
+
+	.submit-button:hover {
+		background-color: #0056b3;
+	}
+
+	.response-message {
+		margin-top: 1em;
+		color: #333;
+		font-size: 2em;
 	}
 </style>
