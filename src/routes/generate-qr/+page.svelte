@@ -2,32 +2,28 @@
 	import QrCode from "svelte-qrcode";
 	//import IDCard from "./IDCard.svelte";
 
-	let inputData = {
-		Suffix: "",
-		lName: "",
-		fName: "",
-		mName: "",
-		sex: "",
-		BF: "[1,1]",
-		DOB: "",
-		POB: "",
-		PCN: generatePCN(),
-	};
+	let firstName: string, middleName: string, lastName: string, 
+		suffix: string, sex: string, bf: string, 
+			dateOfBirth: string, placeOfBirth: string, pcn: string = "";
 
-	let qrCodeData = "";
+	let qrCodeData: string = "";
 
 	function generateQRCode() {
-		inputData.fName = inputData.fName.toUpperCase();
-		inputData.mName = inputData.mName.toUpperCase();
-		inputData.lName = inputData.lName.toUpperCase();
-
-		inputData.DOB = new Date(inputData.DOB).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-
 		qrCodeData = JSON.stringify(
 			{ 
 				DateIssued: formatDate(new Date()),
 				Issuer: "PSA",
-				subject: inputData,
+				subject: {
+					Suffix: suffix,
+					lName: lastName.toUpperCase,
+					fName: firstName.toUpperCase(),
+					mName: middleName.toUpperCase(),
+					sex: sex,
+					BF: "[1,1]",
+					DOB: new Date(dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+					POB: placeOfBirth,
+					PCN: generatePCN(),
+				},
 				alg: "EDDSA",
 				signature: ""
 			}
@@ -70,24 +66,29 @@
 	<div class="fields-container">
 		<div>
 			<label for="firstName">First Name:</label>
-			<input type="text" id="firstName" bind:value={inputData.fName} />
+			<input type="text" id="firstName" bind:value={firstName} />
 		</div>
 
 		<div>
 			<label for="middleName">Middle Name:</label>
-			<input type="text" id="middleName" bind:value={inputData.mName} />
+			<input type="text" id="middleName" bind:value={middleName} />
 		</div>
 
 		<div>
 			<label for="lastName">Last Name:</label>
-			<input type="text" id="lastName" bind:value={inputData.lName} />
+			<input type="text" id="lastName" bind:value={lastName} />
+		</div>
+
+		<div>
+			<label for="lastName">Suffix:</label>
+			<input type="text" id="suffix" bind:value={suffix} />
 		</div>
 	</div>
 
 	<div class="fields-container">
 		<div>
 			<label for="sex">Sex:</label>
-			<select id="sex" bind:value={inputData.sex}>
+			<select id="sex" bind:value={sex}>
 				<option value="">Select</option>
 				<option value="Male">Male</option>
 				<option value="Female">Female</option>
@@ -96,12 +97,12 @@
 
 		<div>
 			<label for="dateOfBirth">Date of Birth:</label>
-			<input type="date" id="dateOfBirth" bind:value={inputData.DOB} />
+			<input type="date" id="dateOfBirth" bind:value={dateOfBirth} />
 		</div>
 
 		<div>
 			<label for="placeOfBirth">Place of Birth:</label>
-			<input type="text" id="placeOfBirth" bind:value={inputData.POB} />
+			<input type="text" id="placeOfBirth" bind:value={placeOfBirth} />
 		</div>
 	</div>
 
