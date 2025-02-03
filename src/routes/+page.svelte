@@ -1,10 +1,12 @@
 <script lang="ts">
+	import { Button, Card, Datepicker, Label, Input } from 'flowbite-svelte';
+
 	let uin: string = '';
-	let dateOfBirth: string = '';
+	let dateOfBirth: Date;
 	let responseMessage: string = '';
 
 	async function validateID() {
-		let dob: string = new Date(dateOfBirth).toISOString().split('T')[0].replace(/-/g, '/');
+		let dob: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000)).toISOString().split('T')[0].replace(/-/g, '/');
 		try {
 			const response = await fetch('http://127.0.0.1:3000/dob', {
 				method: 'POST',
@@ -41,78 +43,33 @@
 
 <svelte:head>
 	<title>Home</title>
-	<meta name="description" content="MOSIP ID Validation" />
+	<meta name="description" content="MOSIP Age Verification" />
 </svelte:head>
 
-<section class="container">
-	<h1>MOSIP ID Validation</h1>
-	<div class="form-group">
-		<label for="uin">UIN:</label>
-		<input type="text" id="uin" bind:value={uin} placeholder="Enter your UIN" />
-	</div>
+<section>
+	<Card class="mx-auto max-w-md mt-6 mb-6">
+		<h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h5>
+		<div class="mb-6">
+			<Label for="uin" class="block mb-2">UIN:</Label>
+			<Input type="text" id="uin" bind:value={uin} placeholder="Enter your UIN" />
+		</div>
 
-	<div class="form-group">
-		<label for="dob">Date of Birth:</label>
-		<input type="date" id="dob" bind:value={dateOfBirth} />
-	</div>
+		<div class="mb-6">
+			<Label for="dateOfBirth" class="block mb-2">Date of Birth:</Label>
+			<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} />
+		</div>
 
-	<button class="submit-button" on:click={validateID}>Submit</button>
+		<Button on:click={validateID}>Validate ID</Button>
+	</Card>
 
-	<p class="response-message">{responseMessage}</p>
+	<Card class="mx-auto max-w-md">
+		<p class="t-normal text-gray-700 dark:text-gray-400 leading-tight text-center">Have a MOSIP ID?</p>
+		<a href="/qr-scanner" class="t-semi-bold text-blue-500 text-center hover:underline">Scan using a QR Code</a>
+	</Card>
+
+	<p class="t-normal text-gray-700 dark:text-gray-400 leading-tight">{responseMessage}</p>
 </section>
 
 <style>
-	.container {
-		background: white;
-		padding: 2em;
-		border-radius: 8px;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		width: 100%;
-		max-width: 500px;
-		text-align: center;
-		margin: 0 auto;
-	}
 
-	h1 {
-		margin-bottom: 1em;
-		color: #333;
-	}
-
-	.form-group {
-		margin-bottom: 1em;
-		text-align: left;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 0.5em;
-		color: #555;
-	}
-
-	input {
-		width: calc(100% - 1em);
-		padding: 0.5em;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-	}
-
-	.submit-button {
-		background-color: #007BFF;
-		color: white;
-		padding: 0.75em 1.5em;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-		font-size: 1em;
-	}
-
-	.submit-button:hover {
-		background-color: #0056b3;
-	}
-
-	.response-message {
-		margin-top: 1em;
-		color: #333;
-		font-size: 2em;
-	}
 </style>
