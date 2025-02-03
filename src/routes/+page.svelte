@@ -4,7 +4,7 @@
 	let responseMessage: string = '';
 
 	async function validateID() {
-		let dob = new Date(dateOfBirth).toISOString().split('T')[0].replace(/-/g, '/');
+		let dob: string = new Date(dateOfBirth).toISOString().split('T')[0].replace(/-/g, '/');
 		try {
 			const response = await fetch('http://127.0.0.1:3000/dob', {
 				method: 'POST',
@@ -14,7 +14,24 @@
 				body: JSON.stringify({ uin, dob })
 			});
 			const data = await response.json();
-			responseMessage = data.authStatus;
+
+			if (data.authStatus) {
+				responseMessage = 'ID Validation: ' + data.authStatus
+
+				const birthYear: number = new Date(dateOfBirth).getFullYear();
+				const currentYear: number = new Date().getFullYear();
+				const age: number = currentYear - birthYear;
+
+				if (age < 18) {
+					responseMessage += ' (User is under 18)';
+				} else {
+					responseMessage += ' (User is 18 or older)';
+				}
+			} else {
+				responseMessage = 'ID Validation: ' + data.authStatus
+				responseMessage += ' (Invalid ID)'
+			}
+
 		} catch (error) {
 			console.error('Error:', error);
 			responseMessage = 'An error occurred';
