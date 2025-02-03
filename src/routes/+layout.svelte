@@ -12,9 +12,12 @@
 		{@render children()}
 	</main>
 
-	<footer>
+	<footer class="self-center whitespace-normal dark:text-white">
 		<p>
-			visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to learn about SvelteKit
+			&copy; 2025 Department of Computer Science. UP Diliman. All rights reserved.
+		</p>
+		<p>
+			This project is part of the CS 198/199 Undergraduate Program.
 		</p>
 	</footer>
 </div>
