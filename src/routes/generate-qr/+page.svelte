@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { Button, Datepicker, Label, Input, Select } from 'flowbite-svelte';
-	import QrCode from "svelte-qrcode";
-	//import IDCard from "./IDCard.svelte";
+	import { Button, Datepicker, Label, Input, Select, Modal } from 'flowbite-svelte';
+	import IDCard from "./IDCard.svelte";
 
 	let firstName: string, middleName: string, lastName: string, 
-		suffix: string, sex: string, placeOfBirth: string;
+		suffix: string, sex: string, placeOfBirth: string,
+			pcn: string;
 
 	let dateOfBirth: Date;
 
@@ -15,7 +15,12 @@
 
 	let qrCodeData: string = "";
 
+	let clickOutsideModal: boolean = false;
+
 	function generateQRCode() {
+		clickOutsideModal = true;
+		pcn = generatePCN();
+
 		qrCodeData = JSON.stringify(
 			{ 
 				DateIssued: formatDate(new Date()),
@@ -27,9 +32,9 @@
 					mName: middleName.toUpperCase(),
 					sex: sex,
 					BF: "[1,1]",
-					DOB: new Date(dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+					DOB: new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000)).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
 					POB: placeOfBirth,
-					PCN: generatePCN(),
+					PCN: pcn,
 				},
 				alg: "EDDSA",
 				signature: ""
@@ -62,6 +67,14 @@
 </svelte:head>
 
 <section>
+	<Modal title="New MOSIP ID" bind:open={clickOutsideModal} autoclose outsideclose>
+		<IDCard lastName={lastName} firstName={firstName} middleName={middleName} dateOfBirth={dateOfBirth} 
+			pcn={pcn} qrCodeData={qrCodeData} />
+		<svelte:fragment slot="footer">
+			<Button color="alternative">Close</Button>
+		</svelte:fragment>
+	</Modal>
+
 	<form class="flex flex-col space-y-6" on:submit|preventDefault={generateQRCode}>
 		<h3 class="text-xl font-medium text-gray-900 dark:text-white">Create a MOSIP ID</h3>
 		<div class="flex space-x-4">
@@ -98,10 +111,6 @@
 		</Label>
 		<Button type="submit" class="w-1/6">Generate MOSIP ID</Button>
 	</form>
-
-	{#if qrCodeData}
-		<QrCode value={qrCodeData} size=300 />
-	{/if}
 </section>
 
 <style>
