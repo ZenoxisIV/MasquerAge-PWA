@@ -12,7 +12,7 @@
 		{@render children()}
 	</main>
 
-	<footer class="self-center whitespace-normal dark:text-white">
+	<footer class="self-center whitespace-normal dark:text-gray-400">
 		<p>
 			&copy; 2025 Department of Computer Science. UP Diliman. All rights reserved.
 		</p>
@@ -46,10 +46,6 @@
 		justify-content: center;
 		align-items: center;
 		padding: 12px;
-	}
-
-	footer a {
-		font-weight: bold;
 	}
 
 	@media (min-width: 480px) {
