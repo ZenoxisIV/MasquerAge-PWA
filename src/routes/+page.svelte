@@ -47,24 +47,25 @@
 </svelte:head>
 
 <section>
-	<Card class="mx-auto max-w-md mt-6 mb-6">
-		<h5 class="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h5>
-		<div class="mb-6">
-			<Label for="uin" class="block mb-2">UIN:</Label>
-			<Input type="text" id="uin" bind:value={uin} placeholder="Enter your UIN" />
-		</div>
-
-		<div class="mb-6">
-			<Label for="dateOfBirth" class="block mb-2">Date of Birth:</Label>
-			<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} />
-		</div>
-
-		<Button on:click={validateID}>Validate ID</Button>
+	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
+		<form class="flex flex-col space-y-6" on:submit|preventDefault={validateID}>
+			<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
+			<Label class="space-y-2">
+				<span>UIN:</span>
+				<Input type="text" name="uin" bind:value={uin} placeholder="Enter your UIN" required />
+			</Label>
+			<Label class="space-y-2">
+				<span>Date of Birth:</span>
+				<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} required />
+			</Label>
+			<Button type="submit" class="w-full">Validate ID</Button>
+		</form>
 	</Card>
-
-	<Card class="mx-auto max-w-md">
-		<p class="t-normal text-gray-700 dark:text-gray-400 leading-tight text-center">Have a MOSIP ID?</p>
-		<a href="/qr-scanner" class="t-semi-bold text-blue-500 text-center hover:underline">Scan using a QR Code</a>
+	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
+		<a href="/qr-scanner" class="text-primary-700 text-center font-medium hover:underline dark:text-primary-500">Verify using a QR Code</a>
+		<div class="text-normal text-center font-medium text-gray-500 dark:text-gray-300">
+			New to AgeCloak? <a href="/generate-qr" class="text-primary-700 hover:underline dark:text-primary-500"> Create a MOSIP ID </a>
+		</div>
 	</Card>
 
 	<p class="t-normal text-gray-700 dark:text-gray-400 leading-tight">{responseMessage}</p>
