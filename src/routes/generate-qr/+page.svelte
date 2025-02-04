@@ -1,10 +1,17 @@
 <script lang="ts">
+	import { Button, Datepicker, Label, Input, Select } from 'flowbite-svelte';
 	import QrCode from "svelte-qrcode";
 	//import IDCard from "./IDCard.svelte";
 
 	let firstName: string, middleName: string, lastName: string, 
-		suffix: string, sex: string, bf: string, 
-			dateOfBirth: string, placeOfBirth: string, pcn: string = "";
+		suffix: string, sex: string, placeOfBirth: string;
+
+	let dateOfBirth: Date;
+
+	let sexAtBirth = [
+		{ value: 'Male', name: 'Male' },
+		{ value: 'Female', name: 'Female' },
+	];
 
 	let qrCodeData: string = "";
 
@@ -55,134 +62,48 @@
 </svelte:head>
 
 <section>
-	<h1>Generate QR</h1>
-
-	<h2>
-		<strong>Philippine National ID</strong>
-	</h2>
-
-	<br>
-
-	<div class="fields-container">
-		<div>
-			<label for="firstName">First Name:</label>
-			<input type="text" id="firstName" bind:value={firstName} />
+	<form class="flex flex-col space-y-6" on:submit|preventDefault={generateQRCode}>
+		<h3 class="text-xl font-medium text-gray-900 dark:text-white">Create a MOSIP ID</h3>
+		<div class="flex space-x-4">
+			<Label class="space-y-2 flex-1">
+				<span>First Name:</span>
+				<Input type="text" name="firstName" bind:value={firstName} placeholder="John" required />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<span>Middle Name:</span>
+				<Input type="text" name="MiddleName" bind:value={middleName} placeholder="Michael" required />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<span>Last Name:</span>
+				<Input type="text" name="lastName" bind:value={lastName} placeholder="Doe" required />
+			</Label>
 		</div>
-
-		<div>
-			<label for="middleName">Middle Name:</label>
-			<input type="text" id="middleName" bind:value={middleName} />
+		<div class="flex space-x-4">
+			<Label class="space-y-2 flex-1">
+				<span>Suffix (if any):</span>
+				<Input type="text" name="suffix" bind:value={suffix} placeholder="Jr." />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<span>Sex:</span>
+				<Select items={sexAtBirth} bind:value={sex} placeholder="Choose an option..." required />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<span>Date of Birth:</span>
+				<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} required />
+			</Label>
 		</div>
-
-		<div>
-			<label for="lastName">Last Name:</label>
-			<input type="text" id="lastName" bind:value={lastName} />
-		</div>
-
-		<div>
-			<label for="lastName">Suffix:</label>
-			<input type="text" id="suffix" bind:value={suffix} />
-		</div>
-	</div>
-
-	<div class="fields-container">
-		<div>
-			<label for="sex">Sex:</label>
-			<select id="sex" bind:value={sex}>
-				<option value="">Select</option>
-				<option value="Male">Male</option>
-				<option value="Female">Female</option>
-			</select>
-		</div>
-
-		<div>
-			<label for="dateOfBirth">Date of Birth:</label>
-			<input type="date" id="dateOfBirth" bind:value={dateOfBirth} />
-		</div>
-
-		<div>
-			<label for="placeOfBirth">Place of Birth:</label>
-			<input type="text" id="placeOfBirth" bind:value={placeOfBirth} />
-		</div>
-	</div>
-
-	<button on:click={generateQRCode}>Generate QR Code</button>
+		<Label class="space-y-2">
+			<span>Place of Birth:</span>
+			<Input class="w-1/2" type="text" name="placeOfBirth" bind:value={placeOfBirth} placeholder="Quezon City, Manila" required />
+		</Label>
+		<Button type="submit" class="w-1/6">Generate MOSIP ID</Button>
+	</form>
 
 	{#if qrCodeData}
-		<div class="qr-container">
-			<div class="qr-data">
-				<pre>{qrCodeData}</pre>
-			</div>
-			<QrCode value={qrCodeData} size=300 />
-		</div>
+		<QrCode value={qrCodeData} size=300 />
 	{/if}
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
 
-	h1 {
-		width: 100%;
-	}
-
-	div {
-		margin-bottom: 1rem;
-	}
-
-	.fields-container {
-		display: flex;
-		gap: 1rem;
-		width: 100%;
-		justify-content: center;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-	}
-
-	input, select {
-		width: 100%;
-		padding: 0.5rem;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-	}
-
-	button {
-		padding: 0.75rem 1.5rem;
-		background-color: #007bff;
-		color: white;
-		border: none;
-		border-radius: 4px;
-		cursor: pointer;
-	}
-
-	button:hover {
-		background-color: #0056b3;
-	}
-
-	.qr-container {
-		display: flex;
-		align-items: center;
-		margin-top: 1rem;
-		border: 1px solid #ccc;
-		padding: 1rem;
-		border-radius: 4px;
-		background-color: #f9f9f9;
-	}
-
-	.qr-data {
-		margin-right: 1rem;
-	}
-
-	pre {
-		white-space: pre-wrap;
-		word-wrap: break-word;
-	}
 </style>
