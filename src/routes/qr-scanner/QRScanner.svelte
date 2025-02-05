@@ -82,13 +82,15 @@
 
 <UserMedia bind:useUserMedia />
 
-<div class={`scanner ${active ? '' : 'scanner--hidden'}`}>
-	<div class="scanner__aspect-ratio-container">
-		<canvas bind:this={canvas} class="scanner__canvas"></canvas>
+<div class={`relative w-full max-w-[500px] ${active ? '' : 'hidden'}`}>
+	<div class="relative overflow-hidden pb-[100%] rounded-[10%]">
+		<canvas bind:this={canvas} class="hidden"></canvas>
 		<!-- svelte-ignore a11y-media-has-caption -->
-		<video bind:this={video} on:canplay={handleCanPlay} class="scanner__video">
-			<!-- <track kind="captions" /> -->
-		</video>
+		<video 
+			bind:this={video} 
+			on:canplay={handleCanPlay} 
+			class="absolute top-0 left-0 w-full h-full rounded-[10%] object-cover outline-none transform scale-x-[-1]"
+		></video>
 		<QRBorder />
 	</div>
 </div>
@@ -98,40 +100,5 @@
 </slot>
 
 <style>
-	.scanner {
-		width: 100%;
-		max-width: 500px;
-	}
 
-	.scanner--hidden {
-		display: none;
-	}
-
-	.scanner__aspect-ratio-container {
-		position: relative;
-
-		overflow: hidden;
-
-		padding-bottom: 100%;
-
-		border-radius: 10%;
-	}
-
-	.scanner__video {
-		position: absolute;
-		top: 0;
-		left: 0;
-
-		width: 100%;
-		height: 100%;
-
-		border-radius: inherit;
-
-		outline: none;
-		object-fit: cover;
-	}
-
-	.scanner__canvas {
-		display: none;
-	}
 </style>
