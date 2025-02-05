@@ -1,56 +1,32 @@
 <script lang="ts">
 	import Header from './Header.svelte';
+	import { page } from '$app/state';
 	import '../app.pcss';
 
 	let { children } = $props();
 </script>
 
-<div class="app">
-	<Header />
+<div class="flex flex-col min-h-screen">
+	{#if !page.error}
+		<Header />
+	{/if}
 
-	<main>
+	<main class="flex-1 flex flex-col p-4 w-full max-w-4xl mx-auto box-border">
 		{@render children()}
 	</main>
-
-	<footer class="self-center whitespace-normal dark:text-gray-400">
-		<p>
-			&copy; 2025 Department of Computer Science. UP Diliman. All rights reserved.
-		</p>
-		<p>
-			This project is part of the CS 198/199 Undergraduate Program.
-		</p>
-	</footer>
+	
+	{#if !page.error}
+		<footer class="flex flex-col justify-center items-center p-3 self-center whitespace-normal dark:text-gray-400 md:p-3">
+			<p>
+				&copy; 2025 Department of Computer Science. UP Diliman. All rights reserved.
+			</p>
+			<p>
+				This project is part of the CS 198/199 Undergraduate Program.
+			</p>
+		</footer>
+	{/if}
 </div>
 
 <style>
-	.app {
-		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
 
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		padding: 12px;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
-	}
 </style>
