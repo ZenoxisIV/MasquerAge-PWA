@@ -1,44 +1,42 @@
 <script lang="ts">
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 	import { stream, error, status } from './stores.js';
-
 	import jsQR from 'jsqr';
 
 	import QRBorder from './QRBorder.svelte';
 	import QRData from './QRData.svelte';
-
 	import UserMedia from './utils/use-usermedia.svelte';
 
-	export let result: any = null;
-	export let stopMediaStream: any = null;
-	let startMediaStream: any = null;
+	interface UserMediaHandlers {
+  		stopMediaStream: () => void;
+  		startMediaStream: () => void;
+	}
 
-	const dispatch = createEventDispatcher();
+	export let result: string | null = null;
+	export let stopMediaStream: (() => void) | null = null;
+	let startMediaStream: (() => void) | null = null;
 
 	$: active = !result;
 
-	let video: HTMLVideoElement;
-	let canvas: HTMLCanvasElement;
-	let useUserMedia: any;
+	let video: HTMLVideoElement | null = null;
+	let canvas: HTMLCanvasElement | null = null;
+	let useUserMedia: () => UserMediaHandlers;
+
+	let rootElement: HTMLDivElement | null = null;
 
 	onMount(() => {
-		({ stopMediaStream, startMediaStream } = useUserMedia());
-
-		return () => {
-			stopMediaStream();
-			video.srcObject = null;
-		};
+		const handlers = useUserMedia();
+		stopMediaStream = handlers.stopMediaStream;
+		startMediaStream = handlers.startMediaStream;
 	});
 
 	const startCapturing = (): void => {
 		if (!canvas || !video) return;
 
 		const context = canvas.getContext('2d');
-
 		if (!context) return;
 
 		const { width, height } = canvas;
-
 		context.drawImage(video, 0, 0, width, height);
 
 		const imageData = context.getImageData(0, 0, width, height);
@@ -48,23 +46,26 @@
 			setTimeout(startCapturing, 750);
 		} else {
 			result = qrCode.data;
-			dispatch('successfulScan', qrCode.data);
 
-			stopMediaStream();
-			video.srcObject = null;
+			if (rootElement) {
+				rootElement.dispatchEvent(new CustomEvent('successfulScan', { detail: qrCode.data }));
+			}
+
+			stopMediaStream?.();
+			if (video) {
+				video.srcObject = null;
+			}
 		}
 	};
 
 	const handleCanPlay = (): void => {
-		if (canvas === null || canvas === null || video === null || video === null) {
-			return;
-		}
+		if (!canvas || !video) return;
 
 		canvas.width = video.videoWidth;
 		canvas.height = video.videoHeight;
 
 		if ($error !== null) {
-			// TODO: show dialog to user with an error
+			console.error($error);
 		} else {
 			startCapturing();
 		}
@@ -82,7 +83,7 @@
 
 <UserMedia bind:useUserMedia />
 
-<div class={`relative w-full max-w-[500px] ${active ? '' : 'hidden'}`}>
+<div bind:this={rootElement} class={`relative w-full max-w-[500px] ${active ? '' : 'hidden'}`}>
 	<div class="relative overflow-hidden pb-[100%] rounded-[10%]">
 		<canvas bind:this={canvas} class="hidden"></canvas>
 		<!-- svelte-ignore a11y-media-has-caption -->
