@@ -4,15 +4,15 @@ import { db } from "$lib/server/db/index";
 import { usersTable } from "$lib/server/db/schema";
 
 function formatDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = date.toLocaleString('default', { month: 'long' });
-    const year = date.getFullYear();
+    const day: string = date.getDate().toString().padStart(2, '0');
+    const month: string = date.toLocaleString('default', { month: 'long' });
+    const year: number = date.getFullYear();
     return `${day} ${month} ${year}`;
 }
 
-function generateQRCode(user: any) {
-	const dob = new Date(user.dateOfBirth);
-	const formattedDOB = new Date(dob.getTime() + Math.abs(dob.getTimezoneOffset() * 60000))
+function generateQRCode(user: any): string {
+	const dob: Date = new Date(user.dateOfBirth);
+	const formattedDOB: string = new Date(dob.getTime() + Math.abs(dob.getTimezoneOffset() * 60000))
 		.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 	return JSON.stringify({

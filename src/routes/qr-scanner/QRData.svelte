@@ -2,13 +2,13 @@
 	import { Button, Modal } from 'flowbite-svelte';
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
 
-	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
-	let modalOpen: boolean = false;
-
 	export let decodedData: string;
 	export let onNewScan: () => void;
 
-	async function validateID(data: string) {
+	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
+	let modalOpen: boolean = false;
+
+	async function validateID(data: string): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
 		modalOpen = false;
 

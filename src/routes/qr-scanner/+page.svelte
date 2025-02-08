@@ -9,21 +9,11 @@
 	<meta name="description" content="QR Scanner" />
 </svelte:head>
 
-<section>
+<section class="flex flex-col justify-center items-center flex-[0.6]">
 	<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
     <QRScanner bind:result />
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
 
-	h1 {
-		width: 100%;
-	}
 </style>

@@ -7,13 +7,14 @@
 	import QRData from './QRData.svelte';
 	import UserMedia from './utils/use-usermedia.svelte';
 
+	export let result: string | null = null;
+	export let stopMediaStream: (() => void) | null = null;
+
 	interface UserMediaHandlers {
   		stopMediaStream: () => void;
   		startMediaStream: () => void;
 	}
 
-	export let result: string | null = null;
-	export let stopMediaStream: (() => void) | null = null;
 	let startMediaStream: (() => void) | null = null;
 
 	$: active = !result;

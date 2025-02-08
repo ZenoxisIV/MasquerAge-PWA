@@ -1,14 +1,14 @@
-import { json } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 import { db } from '$lib/server/db';
 import { usersTable } from '$lib/server/db/schema';
 
-export async function POST({ request }) {
+export const POST: RequestHandler = async ({ request }) => {
 	try {
 		const { data } = await request.json();
 		if (!data) return json({ error: 'No data provided' }, { status: 400 });
 
-		let parsedData;
+		let parsedData: JSON;
 		try {
 			parsedData = JSON.parse(data);
 		} catch (error) {
@@ -16,12 +16,12 @@ export async function POST({ request }) {
 		}
 
 		const pcn: string = parsedData.PCN;
-		const dateOfBirth = new Date(parsedData.subject.DOB);
-		const dob = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
+		const dateOfBirth: Date = new Date(parsedData.subject.DOB);
+		const dob: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
 			.toISOString().split('T')[0].replace(/-/g, '/');
 
 		const uinResult = await db.select({ uin: usersTable.uin }).from(usersTable).where(eq(usersTable.pcn, pcn));
-		const uin = uinResult[0]?.uin;
+		const uin: string | null = uinResult[0]?.uin;
 
 		if (!uin) return json({ authStatus: false, error: 'User not found' }, { status: 404 });
 
@@ -35,9 +35,9 @@ export async function POST({ request }) {
 		const result = await response.json();
 
 		if (result.authStatus) {
-			const birthYear = dateOfBirth.getFullYear();
-			const currentYear = new Date().getFullYear();
-			const age = currentYear - birthYear;
+			const birthYear: number = dateOfBirth.getFullYear();
+			const currentYear: number = new Date().getFullYear();
+			const age: number = currentYear - birthYear;
 
 			return json({ authStatus: true, age });
 		} else {

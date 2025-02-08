@@ -1,12 +1,6 @@
 <script lang="ts">
-	import { Button, Datepicker, Label, Input, Select, Modal, P } from 'flowbite-svelte';
+	import { Button, Label, Input, Select, Modal } from 'flowbite-svelte';
 	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
-	let sexAtBirth = [
-		{ value: 'Male', name: 'Male' },
-		{ value: 'Female', name: 'Female' },
-	];
-
-	let openModal: boolean = $state(false);
 
 	function confirmSubmission() {
 		const form = document.getElementById("mosip-form");
@@ -16,7 +10,13 @@
 			console.error("Form with ID 'mosip-form' not found or is not a form.");
 		}
 	}
-	
+
+	let sexAtBirth = [
+		{ value: 'Male', name: 'Male' },
+		{ value: 'Female', name: 'Female' },
+	];
+
+	let openModal: boolean = $state(false);
 </script>
 
 <svelte:head>

@@ -3,12 +3,12 @@
     import IDCard from "./IDCard.svelte";
 
 	let pcn: string = "";
-	let user: JSON;
-    let qrCodeData: JSON;
+	let user: any;
+    let qrCodeData: string;
+	let errorMessage: string;
 	let showModal: boolean = false;
-	let errorMessage: string = "";
 
-	async function fetchUserDetails() {
+	async function fetchUserDetails(): Promise<void> {
 		if (!pcn.trim()) return;
 
 		try {

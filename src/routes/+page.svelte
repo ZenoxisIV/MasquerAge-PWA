@@ -8,7 +8,7 @@
 	let uin: string = '';
 	let dateOfBirth: Date;
 
-	async function validateID() {
+	async function validateID(): Promise<void> {
 		let dob: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000)).toISOString().split('T')[0].replace(/-/g, '/');
 		try {
 			const response = await fetch('http://127.0.0.1:3000/dob', {

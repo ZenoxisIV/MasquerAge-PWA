@@ -1,6 +1,15 @@
 import { db } from '$lib/server/db';
 import { usersTable } from '$lib/server/db/schema';
 
+function generatePCN(): string {
+  const generateSegment = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)).join('');
+  return `${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}`;
+}
+
+function generateUIN(): string {
+  return Array.from({ length: 10 }, () => Math.floor(Math.random() * 10)).join('');
+}
+
 export const actions = {
   default: async (event) => {
     // TODO: needs server-side validation
@@ -27,12 +36,3 @@ export const actions = {
 
   },
 };
-
-function generatePCN(): string {
-  const generateSegment = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)).join('');
-  return `${generateSegment()}-${generateSegment()}-${generateSegment()}-${generateSegment()}`;
-}
-
-function generateUIN(): string {
-  return Array.from({ length: 10 }, () => Math.floor(Math.random() * 10)).join('');
-}
