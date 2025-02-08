@@ -81,7 +81,7 @@
 	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
 		<a href="/qr-scanner" class="text-primary-700 text-center font-medium hover:underline dark:text-primary-500">Verify using a QR Code</a>
 		<div class="text-normal text-center font-medium text-gray-500 dark:text-gray-300">
-			New to AgeCloak? <a href="/generate-qr" class="text-primary-700 hover:underline dark:text-primary-500"> Create a MOSIP ID </a>
+			New to AgeCloak? <a href="/generate-id" class="text-primary-700 hover:underline dark:text-primary-500"> Create a MOSIP ID </a>
 		</div>
 	</Card>
 </section>
