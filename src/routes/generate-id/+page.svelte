@@ -1,14 +1,6 @@
 <script lang="ts">
-	import { Button, Datepicker, Label, Input, Select, Modal } from 'flowbite-svelte';
-
-	let firstName: string = $state();
-	let middleName: string = $state();
-	let lastName: string = $state();
-	let suffix: string = $state();
-	let sex: string = $state();
-	let placeOfBirth: string = $state();
-	let dateOfBirth: Date = $state();
-
+	import { Button, Datepicker, Label, Input, Select, Modal, P } from 'flowbite-svelte';
+	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
 	let sexAtBirth = [
 		{ value: 'Male', name: 'Male' },
 		{ value: 'Female', name: 'Female' },
@@ -24,19 +16,22 @@
 			console.error("Form with ID 'mosip-form' not found or is not a form.");
 		}
 	}
+	
 </script>
 
 <svelte:head>
-	<title>Generate QR</title>
+	<title>Generate ID</title>
 	<meta name="description" content="Generate QR" />
 </svelte:head>
 
 <section>
-	<Modal title="Are you sure the details are correct?" bind:open={openModal} autoclose outsideclose>
-		<svelte:fragment slot="footer">
-			<Button on:click={confirmSubmission}>Submit</Button>
-			<Button color="alternative" on:click={() => (openModal = false)}>Cancel</Button>
-		</svelte:fragment>
+	<Modal bind:open={openModal} size="xs" autoclose>
+		<div class="text-center">
+		  <ExclamationCircleOutline class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" />
+		  <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure the details are correct?</h3>
+		  <Button color="green" class="me-2" on:click={confirmSubmission}>Yes, I'm sure</Button>
+		  <Button color="alternative">No, cancel</Button>
+		</div>
 	</Modal>
 
 	<form id="mosip-form" class="flex flex-col space-y-6" method="POST">
@@ -44,34 +39,34 @@
 		<div class="flex space-x-4">
 			<Label class="space-y-2 flex-1">
 				<span>First Name:</span>
-				<Input type="text" name="firstName" bind:value={firstName} placeholder="John" required />
+				<Input type="text" name="firstName" placeholder="John" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<span>Middle Name:</span>
-				<Input type="text" name="MiddleName" bind:value={middleName} placeholder="Michael" required />
+				<Input type="text" name="middleName" placeholder="Michael" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<span>Last Name:</span>
-				<Input type="text" name="lastName" bind:value={lastName} placeholder="Doe" required />
+				<Input type="text" name="lastName" placeholder="Doe" required />
 			</Label>
 		</div>
 		<div class="flex space-x-4">
 			<Label class="space-y-2 flex-1">
 				<span>Suffix (if any):</span>
-				<Input type="text" name="suffix" bind:value={suffix} placeholder="Jr." />
+				<Input type="text" name="suffix" placeholder="Jr." />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<span>Sex:</span>
-				<Select items={sexAtBirth} bind:value={sex} placeholder="Choose an option..." required />
+				<Select name="sex" items={sexAtBirth} placeholder="Choose an option..." required />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<span>Date of Birth:</span>
-				<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} required />
+				<Input type="text" name="dateOfBirth" placeholder="YYYY-MM-DD" required />
 			</Label>
 		</div>
 		<Label class="space-y-2">
 			<span>Place of Birth:</span>
-			<Input class="w-1/2" type="text" name="placeOfBirth" bind:value={placeOfBirth} placeholder="Quezon City, Manila" required />
+			<Input class="w-1/2" type="text" name="placeOfBirth" placeholder="Quezon City, Manila" required />
 		</Label>
 
 		<Button type="button" class="w-1/4" on:click={() => {openModal = true}}>Generate MOSIP ID</Button>
