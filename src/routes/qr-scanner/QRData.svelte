@@ -3,47 +3,27 @@
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
 
 	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
-	let modalOpen: boolean;
+	let modalOpen: boolean = false;
 
 	export let decodedData: string;
 	export let onNewScan: () => void;
 
 	async function validateID(data: string) {
-		let parsedData;
+		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
+		modalOpen = false;
 
 		try {
-			parsedData = JSON.parse(data);
-		} catch (error) {
-			console.error(error);
-			return;
-		}
-
-		// TODO: query database for uin (map pcn to uin)
-		let pcn: string = parsedData.PCN;
-		let dateOfBirth: Date = new Date(parsedData.subject.DOB)
-		let dob: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000)).toISOString().split('T')[0].replace(/-/g, '/');
-
-		// Note: for now, we hardcode custom values for testing
-		let uin: string = "";
-		dob = "";
-
-		try {
-			const response = await fetch('http://127.0.0.1:3000/dob', {
+			const response = await fetch('/qr-scanner/mosip-verify', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ uin, dob })
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ data })
 			});
-			const data = await response.json();
 
-			if (data.authStatus) {
-				const birthYear: number = new Date(dateOfBirth).getFullYear();
-				const currentYear: number = new Date().getFullYear();
-				const age: number = currentYear - birthYear;
+			const result = await response.json();
 
-				if (age >= 35) {
-					verifiedPrompt = true;	
+			if (response.ok) {
+				if (result.age >= 35) {
+					verifiedPrompt = true;
 				} else {
 					rejectedPrompt = true;
 				}
@@ -51,18 +31,18 @@
 				invalidPrompt = true;
 			}
 
-			modalOpen = verifiedPrompt || rejectedPrompt || invalidPrompt;
-
+			modalOpen = true;
 		} catch (error) {
 			console.error(error);
+			invalidPrompt = true;
+			modalOpen = true;
 		}
 	}
+
+	$: if (decodedData) validateID(decodedData);
 </script>
 
 <slot {decodedData}>
-	{#if decodedData}
-		{validateID(decodedData)}
-	{/if}
 	<Modal bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
 			{#if verifiedPrompt}
@@ -81,5 +61,5 @@
 </slot>
 
 <style>
-
+	
 </style>

@@ -10,14 +10,6 @@
 </svelte:head>
 
 <section>
-	<h1>
-        QR Scanner
-	</h1>
-
-	<h2>
-		<strong>Philippine National ID</strong>
-	</h2>
-
     <QRScanner bind:result />
 </section>
 

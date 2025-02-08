@@ -14,7 +14,7 @@
 	<div class="ms-auto flex items-center text-gray-500 dark:text-gray-400 sm:order-2">
 		<NavUl {activeUrl}>
 			<NavLi href="/">Home</NavLi>
-			<NavLi href="/generate-qr">Generate ID</NavLi>
+			<NavLi href="/generate-id">Generate ID</NavLi>
 			<NavLi href="/qr-scanner">QR Scanner</NavLi>
 		</NavUl>
 		<DarkMode />

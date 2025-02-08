@@ -19,7 +19,9 @@
 <main>
     <div class="mx-auto flex border border-gray-300 p-4 w-11/12 h-72 items-center bg-white rounded-lg">
         <div class="flex-1 text-center flex flex-col items-center">
-            <p class="font-bold mb-1 text-sm text-black whitespace-nowrap">{pcn}</p>
+            {#if pcn}
+                <p class="font-bold mb-1 text-sm text-black whitespace-nowrap">{pcn}</p>
+            {/if}
             <img src="https://cdn-icons-png.flaticon.com/512/3342/3342047.png" alt="Profile" class="w-24 h-24 object-cover rounded-full" />
         </div>
         <div class="flex-2 pl-2">
@@ -32,9 +34,11 @@
             <p class="text-xs italic text-black">Petsa ng Kapanganakan/Date of Birth</p>
             <p class="font-bold mb-1 text-black">{formattedDOB}</p>
         </div>
-        <div class="flex-1 text-center pl-6">
-            <QrCode value={qrCodeData} size=275 />
-        </div>
+        {#if qrCodeData}
+            <div class="flex-1 text-center pl-6">
+                <QrCode value={qrCodeData} size=275 />
+            </div>
+        {/if}
     </div>
 </main>
 
