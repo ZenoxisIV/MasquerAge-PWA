@@ -13,7 +13,7 @@
 		modalOpen = false;
 
 		try {
-			const response = await fetch('/qr-scanner/mosip-verify', {
+			const response = await fetch('/mosip-verify/scan', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ data })

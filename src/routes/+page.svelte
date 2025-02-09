@@ -1,32 +1,27 @@
 <script lang="ts">
-	import { Button, Card, Datepicker, Label, Input, Modal } from 'flowbite-svelte';
+	import { Button, Card, Label, Input, Modal } from 'flowbite-svelte';
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
 	
 	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
 	let modalOpen: boolean;
+	let pcn: string = "";
+	let dateOfBirth: string;
+	let errorMessage: string;
 	
-	let uin: string = '';
-	let dateOfBirth: Date;
+	async function validateID(data: string): Promise<void> {
+		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
+		modalOpen = false;
 
-	async function validateID(): Promise<void> {
-		let dob: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000)).toISOString().split('T')[0].replace(/-/g, '/');
+		if (!pcn.trim()) return;
+		if (!dateOfBirth.trim()) return;
+
 		try {
-			const response = await fetch('http://127.0.0.1:3000/dob', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ uin, dob })
-			});
-			const data = await response.json();
+			const response = await fetch(`/mosip-verify/encode?pcn=${encodeURIComponent(pcn)}&dob=${encodeURIComponent(dateOfBirth)}`);
+			const result = await response.json();
 
-			if (data.authStatus) {
-				const birthYear: number = new Date(dateOfBirth).getFullYear();
-				const currentYear: number = new Date().getFullYear();
-				const age: number = currentYear - birthYear;
-
-				if (age >= 35) {
-					verifiedPrompt = true;	
+			if (response.ok) {
+				if (result.age >= 35) {
+					verifiedPrompt = true;
 				} else {
 					rejectedPrompt = true;
 				}
@@ -34,10 +29,12 @@
 				invalidPrompt = true;
 			}
 
-			modalOpen = verifiedPrompt || rejectedPrompt || invalidPrompt;
-
+			modalOpen = true;
 		} catch (error) {
 			console.error(error);
+			invalidPrompt = true;
+			modalOpen = true;
+			errorMessage = "Error fetching data";
 		}
 	}
 </script>
@@ -69,11 +66,11 @@
 			<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
 			<Label class="space-y-2">
 				<span>PCN:</span>
-				<Input type="text" name="uin" bind:value={uin} placeholder="Enter your PCN" required />
+				<Input type="text" name="pcn" bind:value={pcn} placeholder="Enter your PCN" required />
 			</Label>
 			<Label class="space-y-2">
 				<span>Date of Birth:</span>
-				<Datepicker dateFormat={{ year: 'numeric', month: 'numeric', day: 'numeric' }} bind:value={dateOfBirth} required />
+				<Input type="text" name="dateOfBirth" bind:value={dateOfBirth} placeholder="YYYY-MM-DD" required />
 			</Label>
 			<Button type="submit" class="w-full">Validate ID</Button>
 		</form>

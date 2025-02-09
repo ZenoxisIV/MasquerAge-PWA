@@ -20,7 +20,7 @@
                 qrCodeData = data.qrCodeData;
 				showModal = true;
 			} else {
-				errorMessage = data.error || "User not found";
+				errorMessage = data.error || "Invalid credentials";
 			}
 		} catch (error) {
 			errorMessage = "Error fetching data";
