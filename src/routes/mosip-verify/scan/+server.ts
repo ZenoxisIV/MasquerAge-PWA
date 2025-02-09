@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			return json({ error: 'Invalid QR Code format' }, { status: 400 });
 		}
 
-		const pcn: string = parsedData.PCN;
+		const pcn: string = parsedData.subject.PCN;
 		const dateOfBirth: Date = new Date(parsedData.subject.DOB);
 		const dobDB: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
 		.toISOString().split('T')[0];
