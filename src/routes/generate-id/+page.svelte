@@ -1,40 +1,19 @@
 <script lang="ts">
 	import { Button, Label, Input, Select, Modal } from 'flowbite-svelte';
-	import { ExclamationCircleOutline } from 'flowbite-svelte-icons';
-
-	function confirmSubmission() {
-		const form = document.getElementById("mosip-form");
-		if (form instanceof HTMLFormElement) {
-			form.submit();
-		} else {
-			console.error("Form with ID 'mosip-form' not found or is not a form.");
-		}
-	}
 
 	let sexAtBirth = [
 		{ value: 'Male', name: 'Male' },
 		{ value: 'Female', name: 'Female' },
 	];
-
-	let openModal: boolean = $state(false);
 </script>
 
 <svelte:head>
-	<title>Generate ID</title>
-	<meta name="description" content="Generate QR" />
+	<title>AgeCloak | Create</title>
+	<meta name="description" content="Create a MOSIP ID" />
 </svelte:head>
 
 <section>
-	<Modal bind:open={openModal} size="xs" autoclose>
-		<div class="text-center">
-		  <ExclamationCircleOutline class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" />
-		  <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure the details are correct?</h3>
-		  <Button color="green" class="me-2" on:click={confirmSubmission}>Yes, I'm sure</Button>
-		  <Button color="alternative">No, cancel</Button>
-		</div>
-	</Modal>
-
-	<form id="mosip-form" class="flex flex-col space-y-6" method="POST">
+	<form class="flex flex-col space-y-6" method="POST">
 		<h3 class="text-xl font-medium text-gray-900 dark:text-white">Create a MOSIP ID</h3>
 		<div class="flex space-x-4">
 			<Label class="space-y-2 flex-1">
@@ -69,7 +48,7 @@
 			<Input class="w-1/2" type="text" name="placeOfBirth" placeholder="Quezon City, Manila" required />
 		</Label>
 
-		<Button type="button" class="w-1/4" on:click={() => {openModal = true}}>Generate MOSIP ID</Button>
+		<Button type="submit" class="w-1/4">Generate MOSIP ID</Button>
 	</form>
 </section>
 

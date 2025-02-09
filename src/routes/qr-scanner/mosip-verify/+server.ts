@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		const { data } = await request.json();
 		if (!data) return json({ error: 'No data provided' }, { status: 400 });
 
-		let parsedData: JSON;
+		let parsedData: any;
 		try {
 			parsedData = JSON.parse(data);
 		} catch (error) {

@@ -45,7 +45,7 @@ export const GET: RequestHandler = async ({ url }) => {
 		const result = await db.select().from(usersTable).where(eq(usersTable.pcn, pcn));
 
 		if (result.length === 0) {
-			return json({ error: "User not found" }, { status: 404 });
+			return json({ error: "Invalid credentials" }, { status: 404 });
 		}
 
 		const user = result[0];

@@ -29,7 +29,7 @@
 </script>
 
 <svelte:head>
-	<title>View MOSIP ID</title>
+	<title>AgeCloak | View</title>
 	<meta name="description" content="View MOSIP ID" />
 </svelte:head>
 
@@ -47,6 +47,11 @@
 		{#if errorMessage}
 			<p class="text-red-500 mt-2">{errorMessage}</p>
 		{/if}
+	</Card>
+	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
+		<div class="text-normal text-center font-medium text-gray-500 dark:text-gray-300">
+			Note: This page is for convenience purposes only. Never expose personal information without consent.
+		</div>
 	</Card>
 </section>
 

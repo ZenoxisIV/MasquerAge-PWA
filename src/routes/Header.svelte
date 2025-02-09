@@ -14,7 +14,7 @@
 	<div class="ms-auto flex items-center text-gray-500 dark:text-gray-400 sm:order-2">
 		<NavUl {activeUrl}>
 			<NavLi href="/">Home</NavLi>
-			<NavLi href="/qr-scanner">QR Scanner</NavLi>
+			<NavLi href="/qr-scanner">Scan</NavLi>
 			<NavLi href="/generate-id">Create</NavLi>
 			<NavLi href="/view-id">View</NavLi>
 			

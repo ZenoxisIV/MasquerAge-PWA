@@ -43,8 +43,8 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="MOSIP Age Verification" />
+	<title>AgeCloak | Home</title>
+	<meta name="description" content="MOSIP Anonymous Age Verification" />
 </svelte:head>
 
 <section>
@@ -68,8 +68,8 @@
 		<form class="flex flex-col space-y-6" on:submit|preventDefault={validateID}>
 			<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
 			<Label class="space-y-2">
-				<span>UIN:</span>
-				<Input type="text" name="uin" bind:value={uin} placeholder="Enter your UIN" required />
+				<span>PCN:</span>
+				<Input type="text" name="uin" bind:value={uin} placeholder="Enter your PCN" required />
 			</Label>
 			<Label class="space-y-2">
 				<span>Date of Birth:</span>
