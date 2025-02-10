@@ -14,13 +14,13 @@ export const actions = {
   default: async (event) => {
     // TODO: needs server-side validation
     const formData = await event.request.formData();
-    const firstName: string = formData.get("firstName");
-    const middleName: string = formData.get("middleName");
-    const lastName: string = formData.get("lastName");
-    const suffix: string = formData.get("suffix");
-    const sex: string = formData.get("sex");
-    const dateOfBirth: Date = new Date(formData.get("dateOfBirth"));
-    const placeOfBirth: string = formData.get("placeOfBirth");
+    const firstName: FormDataEntryValue | null = formData.get("firstName");
+    const middleName: FormDataEntryValue | null = formData.get("middleName");
+    const lastName: FormDataEntryValue | null = formData.get("lastName");
+    const suffix: FormDataEntryValue | null = formData.get("suffix");
+    const sex: FormDataEntryValue | null = formData.get("sex");
+    const dateOfBirth: Date = new Date(formData.get("dateOfBirth") as string);
+    const placeOfBirth: FormDataEntryValue | null = formData.get("placeOfBirth");
 
     await db.insert(usersTable).values({
       pcn: generatePCN(),

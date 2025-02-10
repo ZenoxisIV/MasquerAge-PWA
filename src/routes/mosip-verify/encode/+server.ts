@@ -4,8 +4,8 @@ import { db } from "$lib/server/db/index";
 import { usersTable } from "$lib/server/db/schema";
 
 export const GET: RequestHandler = async ({ url }) => {
-    const pcn: string = url.searchParams.get("pcn");
-    const dobDB: string = url.searchParams.get("dob");
+    const pcn: string | null = url.searchParams.get("pcn");
+    const dobDB: string | null = url.searchParams.get("dob");
 
     if (!pcn) {
         return json({ error: "PCN is required" }, { status: 400 });
