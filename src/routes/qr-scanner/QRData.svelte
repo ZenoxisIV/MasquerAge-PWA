@@ -13,7 +13,7 @@
 		modalOpen = false;
 
 		try {
-			const response = await fetch('/mosip-verify/scan', {
+			const response = await fetch('/api/scan', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ data })

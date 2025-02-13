@@ -12,7 +12,7 @@
 		if (!pcn.trim()) return;
 
 		try {
-			const response = await fetch(`/view-id/user?pcn=${encodeURIComponent(pcn)}`);
+			const response = await fetch(`/api/user?pcn=${encodeURIComponent(pcn)}`);
 			const data = await response.json();
 
 			if (response.ok) {
