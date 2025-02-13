@@ -35,7 +35,7 @@ function generateQRCode(user: any): string {
 }
 
 export const GET: RequestHandler = async ({ url }) => {
-	const pcn: string = url.searchParams.get("pcn");
+	const pcn: string | null = url.searchParams.get("pcn");
 
 	if (!pcn) {
 		return json({ error: "PCN is required" }, { status: 400 });

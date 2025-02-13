@@ -9,5 +9,6 @@ CREATE TABLE `users` (
 	`sex` text,
 	`dateOfBirth` date,
 	`placeOfBirth` text,
+	`photo` text,
 	CONSTRAINT `users_id` PRIMARY KEY(`id`)
 );

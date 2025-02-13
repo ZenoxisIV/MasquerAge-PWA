@@ -58,7 +58,7 @@
 <Modal title="View MOSIP ID" bind:open={showModal} autoclose outsideclose>
     {#if user}
         <IDCard lastName={user.lastName} firstName={user.firstName} middleName={user.middleName} dateOfBirth={user.dateOfBirth} 
-        pcn={user.pcn} qrCodeData={qrCodeData} />
+        pcn={user.pcn} qrCodeData={qrCodeData} photo={user.photo} />
     {/if}
     <svelte:fragment slot="footer">
         <Button color="alternative">Close</Button>

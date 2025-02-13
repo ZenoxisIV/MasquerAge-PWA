@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "a032b578-9716-4c3c-9515-d942944e00e4",
+  "id": "81e1ec63-f1b4-4601-af77-ac4861debcf4",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -72,6 +72,13 @@
         },
         "placeOfBirth": {
           "name": "placeOfBirth",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "photo": {
+          "name": "photo",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
