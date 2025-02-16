@@ -16,7 +16,7 @@
 		if (!dateOfBirth.trim()) return;
 
 		try {
-			const response = await fetch(`/mosip-verify/encode?pcn=${encodeURIComponent(pcn)}&dob=${encodeURIComponent(dateOfBirth)}`);
+			const response = await fetch(`/api/encode?pcn=${encodeURIComponent(pcn)}&dob=${encodeURIComponent(dateOfBirth)}`);
 			const result = await response.json();
 
 			if (response.ok) {

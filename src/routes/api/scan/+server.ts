@@ -21,9 +21,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		.toISOString().split('T')[0];
 		const dobMOSIP: string = dobDB.replace(/-/g, '/');
 
-		const uinResult = await db.select({ uin: usersTable.uin }).from(usersTable).where(eq(usersTable.pcn, pcn));
-		const uin: string | null = uinResult[0]?.uin;
-
+		const queryResult = await db.select({ uin: usersTable.uin, photo: usersTable.photo }).from(usersTable).where(eq(usersTable.pcn, pcn));
+		const uin: string | null = queryResult[0]?.uin;
+		
 		if (!uin) return json({ authStatus: false, error: 'Invalid credentials' }, { status: 404 });
 
 		// Verify DOB via fastAPI
@@ -42,8 +42,9 @@ export const POST: RequestHandler = async ({ request }) => {
             };
 
 			const age: number = getAge(dobDB);
+			const photo: string | null = queryResult[0]?.photo;
 
-			return json({ authStatus: true, age });
+			return json({ authStatus: true, age, photo });
 		} else {
 			return json({ authStatus: false, error: 'Invalid ID' }, { status: 401 });
 		}

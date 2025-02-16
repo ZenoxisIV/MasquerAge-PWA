@@ -7,22 +7,25 @@
 
 	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
 	let modalOpen: boolean = false;
+	let result: { age?: number; photo?: string } = {};
 
 	async function validateID(data: string): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
 		modalOpen = false;
+		result = {};
 
 		try {
-			const response = await fetch('/mosip-verify/scan', {
+			const response = await fetch('/api/scan', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ data })
 			});
 
-			const result = await response.json();
+			const res = await response.json();
 
 			if (response.ok) {
-				if (result.age >= 35) {
+				result = res;
+				if (res.age >= 35) {
 					verifiedPrompt = true;
 				} else {
 					rejectedPrompt = true;
@@ -46,14 +49,31 @@
 	<Modal bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
 			{#if verifiedPrompt}
-				<CheckCircleSolid class="mx-auto mb-4 text-green-600 w-24 h-24 dark:text-green-400" />
-				<h3 class="mb-5 text-lg font-normal text-black dark:text-gray-400">This person is 35 or older.</h3>
+				<div class="flex flex-col items-center">
+					<div class="relative">
+						{#if result.photo}
+							<img src="{`data:image/png;base64,${result.photo}`}" alt="Profile" class="w-24 h-24 rounded-full border-4 border-green-600 dark:border-green-400" />
+						{:else}
+							<div class="w-24 h-24 rounded-full border-4 border-gray-300 dark:border-gray-500 flex items-center justify-center text-gray-500 text-sm">
+								No Image
+							</div>
+						{/if}
+						<CheckCircleSolid class="absolute bottom-0 right-0 w-8 h-8 text-green-600 dark:text-green-400 stroke-white stroke-2" />
+					</div>
+					<h3 class="mt-4 mb-5 text-lg font-normal text-black dark:text-gray-400">
+						This person is 35 or older.
+					</h3>
+				</div>
 			{:else if rejectedPrompt}
 				<CloseCircleSolid class="mx-auto mb-4 text-red-600 w-24 h-24 dark:text-red-400" />
-				<h3 class="mb-5 text-lg font-normal text-black dark:text-gray-400">This person is below 35.</h3>
+				<h3 class="mb-5 text-lg font-normal text-black dark:text-gray-400">
+					This person is below 35.
+				</h3>
 			{:else if invalidPrompt}
 				<ExclamationCircleSolid class="mx-auto mb-4 text-yellow-400 w-24 h-24 dark:text-yellow-400" />
-				<h3 class="mb-5 text-lg font-normal text-black dark:text-gray-400">Invalid ID. Please try again.</h3>
+				<h3 class="mb-5 text-lg font-normal text-black dark:text-gray-400">
+					Invalid ID. Please try again.
+				</h3>
 			{/if}
 			<Button on:click={onNewScan}>New Scan</Button>
 		</div>

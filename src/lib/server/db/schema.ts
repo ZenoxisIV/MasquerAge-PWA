@@ -10,5 +10,6 @@ export const usersTable = mysqlTable('users', {
 	suffix: text("suffix"),
 	sex: text("sex"),
 	dateOfBirth: date(),
-	placeOfBirth: text("placeOfBirth")
+	placeOfBirth: text("placeOfBirth"),
+	photo: text("photo")
 });

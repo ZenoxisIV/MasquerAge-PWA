@@ -8,6 +8,7 @@
     export let pcn;
 
     export let qrCodeData;
+    export let photo;
 
     const formattedDOB = new Date(dateOfBirth).toLocaleDateString('en-US', {
         month: 'long',
@@ -22,7 +23,11 @@
             {#if pcn}
                 <p class="font-bold mb-1 text-sm text-black whitespace-nowrap">{pcn}</p>
             {/if}
-            <img src="https://cdn-icons-png.flaticon.com/512/3342/3342047.png" alt="Profile" class="w-24 h-24 object-cover rounded-full" />
+            {#if photo}
+                <img src={`data:image/png;base64,${photo}`} alt="Profile" />
+            {:else}
+                <img src="https://cdn-icons-png.flaticon.com/512/3342/3342047.png" alt="Profile" class="w-24 h-24 object-cover rounded-full" />
+            {/if}
         </div>
         <div class="flex-2 pl-2">
             <p class="text-xs italic text-black">Apelyido/Last Name</p>
