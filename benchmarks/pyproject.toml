@@ -1,0 +1,13 @@
+[project]
+name = "benchmarks"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "faker>=36.1.1",
+    "locust>=2.32.9",
+    "opencv-python>=4.11.0.86",
+    "pypng>=0.20220715.0",
+    "pyqrcode>=1.2.1",
+]
