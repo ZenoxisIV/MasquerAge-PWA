@@ -8,7 +8,7 @@
 	let dateOfBirth: string;
 	let errorMessage: string;
 	
-	async function validateID(data: string): Promise<void> {
+	async function validateID(): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
 		modalOpen = false;
 
