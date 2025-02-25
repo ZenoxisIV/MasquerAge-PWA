@@ -34,41 +34,61 @@
 
 		<div class="flex space-x-4">
 			<Label class="space-y-2 flex-1">
-				<span>First Name:</span>
+				<div class="mb-2">
+					<span>First Name:</span>
+				</div>
 				<Input type="text" name="firstName" placeholder="John" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
-				<span>Middle Name:</span>
+				<div class="mb-2">
+					<span>Middle Name:</span>
+				</div>
 				<Input type="text" name="middleName" placeholder="Michael" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
-				<span>Last Name:</span>
+				<div class="mb-2">
+					<span>Last Name:</span>
+				</div>
 				<Input type="text" name="lastName" placeholder="Doe" required />
 			</Label>
 		</div>
 
 		<div class="flex space-x-4">
 			<Label class="space-y-2 flex-1">
-				<span>Suffix (if any):</span>
+				<div class="mb-2">
+					<span>Suffix (if any):</span>
+				</div>
 				<Input type="text" name="suffix" placeholder="Jr." />
 			</Label>
 			<Label class="space-y-2 flex-1">
-				<span>Sex:</span>
+				<div class="mb-2">
+					<span>Sex:</span>
+				</div>
 				<Select name="sex" items={sexAtBirth} placeholder="Choose an option..." required />
 			</Label>
 			<Label class="space-y-2 flex-1">
-				<span>Date of Birth:</span>
+				<div class="mb-2">
+					<span>Date of Birth:</span>
+				</div>
 				<Input type="text" name="dateOfBirth" placeholder="YYYY-MM-DD" required />
 			</Label>
 		</div>
 
 		<Label class="space-y-2">
-			<span>Place of Birth:</span>
+			<div class="mb-2">
+				<span>Place of Birth:</span>
+			</div>
 			<Input class="w-1/2" type="text" name="placeOfBirth" placeholder="Quezon City, Manila" required />
 		</Label>
 
-		<input class="mt-2" name="imageFile" type="file" accept="image/*" on:change={onFileInput} />
-		<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
+		<Label class="space-y-2">
+			<div class="mb-2">
+				<span>Add Photo:</span>
+			</div>
+			<Fileupload on:change={onFileInput} />
+			<Helper>PNG or JPG (MAX. 800x400px).</Helper>
+			<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
+		</Label>
 
 		<Button type="submit" class="w-1/4">Generate MOSIP ID</Button>
 	</form>
