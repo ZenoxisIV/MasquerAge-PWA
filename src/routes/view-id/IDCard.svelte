@@ -1,52 +1,114 @@
 <script lang="ts">
     import QrCode from "svelte-qrcode";
 
-    export let lastName;
-    export let firstName;
-    export let middleName;
-    export let dateOfBirth;
-    export let pcn;
-
-    export let qrCodeData;
-    export let photo;
+    export let pcn: string;
+    export let lastName: string;
+    export let firstName: string;
+    export let middleName: string;
+    export let dateOfBirth: string;
+    export let sex: string;
+    export let bloodType: string;
+    export let civilStatus: string;
+    export let qrCodeData: any;
+    export let photo: string;
 
     const formattedDOB = new Date(dateOfBirth).toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',
         year: 'numeric'
-    });
+    }).toUpperCase();
+
+    let isFlipped: boolean = false;
+
+    function toggleFlip(): void {
+        isFlipped = !isFlipped;
+    }
 </script>
-
-<main>
-    <div class="mx-auto flex border border-gray-300 p-4 w-11/12 h-72 items-center bg-white rounded-lg">
-        <div class="flex-1 text-center flex flex-col items-center">
-            {#if pcn}
-                <p class="font-bold mb-1 text-sm text-black whitespace-nowrap">{pcn}</p>
-            {/if}
-            {#if photo}
-                <img src={`data:image/png;base64,${photo}`} alt="Profile" />
-            {:else}
-                <img src="https://cdn-icons-png.flaticon.com/512/3342/3342047.png" alt="Profile" class="w-24 h-24 object-cover rounded-full" />
-            {/if}
-        </div>
-        <div class="flex-2 pl-2">
-            <p class="text-xs italic text-black">Apelyido/Last Name</p>
-            <p class="font-bold mb-1 text-black">{lastName.toUpperCase()}</p>
-            <p class="text-xs italic text-black">Mga Pangalan/Given Name</p>
-            <p class="font-bold mb-1 text-black">{firstName.toUpperCase()}</p>
-            <p class="text-xs italic text-black">Gitnang Apelyido/Middle Name</p>
-            <p class="font-bold mb-1 text-black">{middleName.toUpperCase()}</p>
-            <p class="text-xs italic text-black">Petsa ng Kapanganakan/Date of Birth</p>
-            <p class="font-bold mb-1 text-black">{formattedDOB}</p>
-        </div>
-        {#if qrCodeData}
-            <div class="flex-1 text-center pl-6">
-                <QrCode value={qrCodeData} size=275 />
+  
+<div class="w-[46rem] h-[27rem] perspective-1000 cursor-pointer mx-auto mt-10" on:click={toggleFlip}>
+    <div class={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
+        <!-- Front -->
+        <div class="absolute w-full h-full backface-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8">
+            <div class="flex flex-col items-center">
+                <div class="text-center text-sm">
+                <p class="font-bold">REPUBLIKA NG PILIPINAS</p>
+                <p>Republic of the Philippines</p>
+                <p class="font-bold mt-2">PAMBANSANG PAGKAKAKILANLAN</p>
+                <p>Philippine Identification Card</p>
+                </div>
             </div>
-        {/if}
+            <div class="flex flex-row justify-between items-center mt-8">
+                <div class="flex flex-col items-center">
+                    <p class="text-lg font-bold text-center">{pcn}</p>
+                    <img src={`data:image/png;base64,${photo}`} alt="Profile Picture" class="w-32 h-32 mb-4" />
+                </div>
+                <div class="text-sm space-y-4">
+                    <div>
+                        <p class="italic">APELYIDO/LAST NAME</p>
+                        <p class="font-bold">{lastName.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <p class="italic">MGA PANGALAN/GIVEN NAMES</p>
+                        <p class="font-bold">{firstName.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <p class="italic">GITNANG APELYIDO/MIDDLE NAME</p>
+                        <p class="font-bold">{middleName.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <p class="italic">PETSA NG KAPANGANAKAN/DATE OF BIRTH</p>
+                        <p class="font-bold">{formattedDOB}</p>
+                    </div>
+                </div>
+                {#if pcn}
+                    <div class="flex justify-center items-center mr-2">
+                        <QrCode value={pcn.replace("-", "")} size=150 />
+                    </div>
+                {/if}
+            </div>
+        </div>
+    
+        <!-- Back -->
+        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8 border-2">
+            <div class="flex justify-between items-center h-full">
+                <div class="text-sm space-y-4 text-left">
+                    <div>
+                        <p class="italic">KASARIAN / SEX</p>
+                        <p class="font-bold">{sex.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <p class="italic">URI NG DUGO / BLOOD TYPE</p>
+                        <p class="font-bold">{bloodType.toUpperCase()}</p>
+                    </div>
+                    <div>
+                        <p class="italic">KALAGAYANG SIBIL / MARITAL STATUS</p>
+                        <p class="font-bold">{civilStatus.toUpperCase()}</p>
+                    </div>
+                </div>
+                {#if qrCodeData}
+                    <div class="flex justify-center items-center mr-2">
+                        <QrCode value={pcn} size=200 />
+                    </div>
+                {/if}
+            </div>
+        </div>
     </div>
-</main>
-
+</div>
+  
 <style>
+    .perspective-1000 {
+        perspective: 1000px;
+    }
 
+    .transform-style-preserve-3d {
+        transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+        backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+        transform: rotateY(180deg);
+    }
 </style>
