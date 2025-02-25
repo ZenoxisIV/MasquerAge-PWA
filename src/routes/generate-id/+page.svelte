@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Label, Input, Select } from 'flowbite-svelte';
+	import { Button, Label, Input, Select, Fileupload, Helper } from 'flowbite-svelte';
 	import { base64 } from "@sveu/browser";
 
 	let sexAtBirth = [
@@ -73,7 +73,3 @@
 		<Button type="submit" class="w-1/4">Generate MOSIP ID</Button>
 	</form>
 </section>
-
-<style>
-
-</style>

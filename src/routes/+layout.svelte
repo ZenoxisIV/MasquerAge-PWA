@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Header from './Header.svelte';
 	import { page } from '$app/state';
-	import '../app.pcss';
+	import '../app.css';
 
 	let { children } = $props();
 </script>
@@ -26,7 +26,3 @@
 		</footer>
 	{/if}
 </div>
-
-<style>
-
-</style>

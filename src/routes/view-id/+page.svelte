@@ -64,7 +64,3 @@
         <Button color="alternative">Close</Button>
     </svelte:fragment>
 </Modal>
-
-<style>
-
-</style>

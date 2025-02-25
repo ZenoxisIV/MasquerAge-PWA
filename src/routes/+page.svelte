@@ -82,7 +82,3 @@
 		</div>
 	</Card>
 </section>
-
-<style>
-
-</style>

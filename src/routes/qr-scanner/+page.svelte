@@ -13,7 +13,3 @@
 	<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
     <QRScanner bind:result />
 </section>
-
-<style>
-
-</style>
