@@ -5,7 +5,7 @@
 	$: activeUrl = $page.url.pathname;
 </script>
   
-<Navbar class="bg-primary-50 dark:bg-[#0f1c24] shadow-md rounded-b-2xl p-2">
+<Navbar class="bg-primary-50 dark:bg-[#0f1c24] shadow-md p-2">
 	<NavBrand href="/">
 		<img src={logo} class="me-3 h-6 sm:h-9" alt="Flowbite Logo" />
 		<span class="self-center whitespace-nowrap text-xl font-semibold text-gray-900 dark:text-gray-100">AgeCloak</span>
