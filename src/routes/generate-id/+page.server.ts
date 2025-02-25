@@ -26,13 +26,13 @@ export const actions = {
     await db.insert(usersTable).values({
       pcn: generatePCN(),
       uin: generateUIN(),
-      firstName,
-      middleName,
-      lastName,
-      suffix,
-      sex,
-      dateOfBirth,
-      placeOfBirth,
+      firstName: firstName?.trim(),
+      middleName: middleName?.trim(),
+      lastName: lastName?.trim(),
+      suffix: suffix?.trim(),
+      sex: sex?.trim(),
+      dateOfBirth: dateOfBirth.toISOString().split('T')[0], // YYYY-MM-DD
+      placeOfBirth: placeOfBirth?.trim(),
       photo: imageAttachment
     });
   },
