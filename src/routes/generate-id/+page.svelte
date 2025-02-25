@@ -28,37 +28,37 @@
 	<meta name="description" content="Create a MOSIP ID" />
 </svelte:head>
 
-<section>
+<section class="p-4 md:p-8">
 	<form class="flex flex-col space-y-6" method="POST">
-		<h3 class="text-xl font-medium text-gray-900 dark:text-white">Create a MOSIP ID</h3>
+		<h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">Create a MOSIP ID</h3>
 
-		<div class="flex space-x-4">
+		<div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
 			<Label class="space-y-2 flex-1">
 				<div class="mb-2">
 					<span>First Name:</span>
 				</div>
-				<Input type="text" name="firstName" placeholder="John" required />
+				<Input type="text" name="firstName" placeholder="Juan" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<div class="mb-2">
 					<span>Middle Name:</span>
 				</div>
-				<Input type="text" name="middleName" placeholder="Michael" required />
+				<Input type="text" name="middleName" placeholder="Martinez" required />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<div class="mb-2">
 					<span>Last Name:</span>
 				</div>
-				<Input type="text" name="lastName" placeholder="Doe" required />
+				<Input type="text" name="lastName" placeholder="Dela Cruz" required />
 			</Label>
 		</div>
 
-		<div class="flex space-x-4">
+		<div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
 			<Label class="space-y-2 flex-1">
 				<div class="mb-2">
 					<span>Suffix (if any):</span>
 				</div>
-				<Input type="text" name="suffix" placeholder="Jr." />
+				<Input type="text" name="suffix" placeholder="e.g., I, III, IV" />
 			</Label>
 			<Label class="space-y-2 flex-1">
 				<div class="mb-2">
@@ -70,7 +70,7 @@
 				<div class="mb-2">
 					<span>Date of Birth:</span>
 				</div>
-				<Input type="text" name="dateOfBirth" placeholder="YYYY-MM-DD" required />
+				<Input type="date" name="dateOfBirth" required />
 			</Label>
 		</div>
 
@@ -78,7 +78,7 @@
 			<div class="mb-2">
 				<span>Place of Birth:</span>
 			</div>
-			<Input class="w-1/2" type="text" name="placeOfBirth" placeholder="Quezon City, Manila" required />
+			<Input class="w-full md:w-1/2" type="text" name="placeOfBirth" placeholder="Manila City, Metro Manila" required />
 		</Label>
 
 		<Label class="space-y-2">
@@ -90,6 +90,6 @@
 			<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
 		</Label>
 
-		<Button type="submit" class="w-1/4">Generate MOSIP ID</Button>
+		<Button type="submit" class="w-full md:w-1/4 mx-auto">Generate MOSIP ID</Button>
 	</form>
 </section>

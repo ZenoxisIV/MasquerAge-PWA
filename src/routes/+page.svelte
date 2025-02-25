@@ -13,7 +13,9 @@
 		modalOpen = false;
 
 		if (!pcn.trim()) return;
-		if (!dateOfBirth.trim()) return;
+		if (!dateOfBirth) return;
+
+		dateOfBirth = new Date(dateOfBirth as string).toISOString().split('T')[0]; // YYYY-MM-DD
 
 		try {
 			const response = await fetch(`/api/encode?pcn=${encodeURIComponent(pcn)}&dob=${encodeURIComponent(dateOfBirth)}`);
@@ -63,14 +65,18 @@
 
 	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
 		<form class="flex flex-col space-y-6" on:submit|preventDefault={validateID}>
-			<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
+			<h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">MOSIP Anonymous Age Verification</h3>
 			<Label class="space-y-2">
-				<span>PCN:</span>
+				<div class="mb-2">
+					<span>PCN:</span>
+				</div>
 				<Input type="text" name="pcn" bind:value={pcn} placeholder="Enter your PCN" required />
 			</Label>
 			<Label class="space-y-2">
-				<span>Date of Birth:</span>
-				<Input type="text" name="dateOfBirth" bind:value={dateOfBirth} placeholder="YYYY-MM-DD" required />
+				<div class="mb-2">
+					<span>Date of Birth:</span>
+				</div>
+				<Input type="date" name="dateOfBirth" bind:value={dateOfBirth} placeholder="YYYY-MM-DD" required />
 			</Label>
 			<Button type="submit" class="w-full">Validate ID</Button>
 		</form>

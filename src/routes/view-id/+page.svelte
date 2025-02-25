@@ -36,9 +36,11 @@
 <section>
 	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
 		<form class="flex flex-col space-y-6" on:submit|preventDefault={fetchUserDetails}>
-			<h3 class="text-xl font-medium text-gray-900 dark:text-white">MOSIP Anonymous Age Verification</h3>
+			<h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">MOSIP Anonymous Age Verification</h3>
 			<Label class="space-y-2">
-				<span>PCN:</span>
+				<div class="mb-2">
+					<span>PCN:</span>
+				</div>
 				<Input bind:value={pcn} type="text" name="pcn" placeholder="Enter your PCN" required />
 			</Label>
 			<Button type="submit" class="w-full">View MOSIP ID</Button>
