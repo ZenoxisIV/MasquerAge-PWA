@@ -4,6 +4,14 @@ import { db } from "$lib/server/db/index";
 import { usersTable } from "$lib/server/db/schema";
 import pino from "pino";
 
+function formatPCN(input: string): string {
+	if (!/^\d{16}$/.test(input)) {
+		throw new Error("Input must be a 16-digit numeric string");
+	}
+
+	return input.match(/.{1,4}/g)?.join('-') ?? '';
+}
+
 const logger: pino.Logger = pino({
     level: import.meta.env.MODE === "production" ? "info" : "debug",
     transport: import.meta.env.MODE === "development" ? 
@@ -37,27 +45,69 @@ export const POST: RequestHandler = async ({ request }) => {
             return json({ error: "Invalid QR Code format" }, { status: 400 });
         }
 
-        const pcn: string = parsedData.subject.PCN;
-        const dateOfBirth: Date = new Date(parsedData.subject.DOB);
-        const dobDB: string = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
-            .toISOString().split("T")[0];
-        const dobMOSIP: string = dobDB.replace(/-/g, "/");
+		let uin: string = "";
+		let dobDB: string = "";
+		let photo: string | null = "";
+		switch (typeof parsedData) {
+			case 'number':
+				const pcn: string = formatPCN(parsedData.toString());
+				const queryResult: { uin: string; dateOfBirth: string, photo: string | null }[] = await db
+					.select({ uin: usersTable.uin, dateOfBirth: usersTable.dateOfBirth, photo: usersTable.photo })
+					.from(usersTable)
+					.where(eq(usersTable.pcn, pcn))
+					.catch((err: unknown) => {
+						logger.error({ err }, "Database query error");
+						throw new Error("Database query failed");
+					});
+				
+				uin = queryResult[0].uin;
+				dobDB = queryResult[0].dateOfBirth;
+				photo = queryResult[0].photo;
 
-        const queryResult: { uin: string; photo: string | null }[] = await db
-            .select({ uin: usersTable.uin, photo: usersTable.photo })
-            .from(usersTable)
-            .where(eq(usersTable.pcn, pcn))
-            .catch((err: unknown) => {
-                logger.error({ err }, "Database query error");
-                throw new Error("Database query failed");
-            });
+				break;
+			case 'object':
+				const keysLength: number = Object.keys(parsedData).length;
+				if (keysLength === 5) {
+					const pcn: string = parsedData.subject.PCN;
+					const dateOfBirth: Date = new Date(parsedData.subject.DOB);
+					dobDB = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
+						.toISOString().split("T")[0];
+					
+					const queryResult: { uin: string; photo: string | null }[] = await db
+						.select({ uin: usersTable.uin, photo: usersTable.photo })
+						.from(usersTable)
+						.where(eq(usersTable.pcn, pcn))
+						.catch((err: unknown) => {
+							logger.error({ err }, "Database query error");
+							throw new Error("Database query failed");
+						});
 
-        if (!queryResult.length) {
-            return json({ authStatus: false, error: "Invalid credentials" }, { status: 404 });
-        }
+					if (!queryResult.length) {
+						return json({ authStatus: false, error: "Invalid credentials" }, { status: 404 });
+					}
 
-        const uin: string = queryResult[0].uin;
-        const photo: string | null = queryResult[0].photo;
+					uin = queryResult[0].uin;
+					photo = queryResult[0].photo;
+				} else if (keysLength === 17) {
+					const pcn: string = formatPCN(parsedData.pcn);
+
+					const queryResult: { uin: string }[] = await db
+						.select({ uin: usersTable.uin })
+						.from(usersTable)
+						.where(eq(usersTable.pcn, pcn))
+						.catch((err: unknown) => {
+							logger.error({ err }, "Database query error");
+							throw new Error("Database query failed");
+						});
+
+					uin = queryResult[0].uin;
+					dobDB = parsedData.bd;
+					photo = parsedData.p;
+				}
+				break;
+		}
+
+		const dobMOSIP: string = dobDB.replace(/-/g, "/");
 
 		// Verify DOB via fastAPI
         const response = await fetchWithTimeout("http://127.0.0.1:3000/dob", {
