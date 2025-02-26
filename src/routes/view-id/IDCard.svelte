@@ -24,23 +24,36 @@
         isFlipped = !isFlipped;
     }
 </script>
-  
-<div class="w-[46rem] h-[27rem] perspective-1000 cursor-pointer mx-auto mt-10" on:click={toggleFlip}>
+
+<div 
+    class="w-[46rem] h-[27rem] perspective-1000 cursor-pointer mx-auto mt-10" 
+    on:click={toggleFlip}
+    on:keydown={(e) => e.key === "Enter" || e.key === " " ? toggleFlip() : null}
+    role="button"
+    tabindex="0"
+    aria-label="Identification Card"
+>
     <div class={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
         <!-- Front -->
-        <div class="absolute w-full h-full backface-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8">
+        <div class="absolute w-full h-full backface-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8" 
+            aria-hidden={isFlipped}
+        >
             <div class="flex flex-col items-center">
                 <div class="text-center text-sm">
-                <p class="font-bold">REPUBLIKA NG PILIPINAS</p>
-                <p>Republic of the Philippines</p>
-                <p class="font-bold mt-2">PAMBANSANG PAGKAKAKILANLAN</p>
-                <p>Philippine Identification Card</p>
+                    <p class="font-bold">REPUBLIKA NG PILIPINAS</p>
+                    <p>Republic of the Philippines</p>
+                    <p class="font-bold mt-2">PAMBANSANG PAGKAKAKILANLAN</p>
+                    <p>Philippine Identification Card</p>
                 </div>
             </div>
             <div class="flex flex-row justify-between items-center mt-8">
                 <div class="flex flex-col items-center">
                     <p class="text-lg font-bold text-center">{pcn}</p>
-                    <img src={`data:image/png;base64,${photo}`} alt="Profile Picture" class="w-32 h-32 mb-4" />
+                    <img 
+                        src={`data:image/png;base64,${photo}`} 
+                        alt="Profile picture of {firstName} {lastName}" 
+                        class="w-32 h-32 mb-4" 
+                    />
                 </div>
                 <div class="text-sm space-y-4">
                     <div>
@@ -62,14 +75,16 @@
                 </div>
                 {#if pcn}
                     <div class="flex justify-center items-center mr-2">
-                        <QrCode value={pcn.replace("-", "")} size=150 />
+                        <QrCode value={pcn.replace("-", "")} size=150 aria-label="QR code for PCN {pcn}" />
                     </div>
                 {/if}
             </div>
         </div>
     
         <!-- Back -->
-        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8 border-2">
+        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8 border-2" 
+            aria-hidden={!isFlipped}
+        >
             <div class="flex justify-between items-center h-full">
                 <div class="text-sm space-y-4 text-left">
                     <div>
@@ -87,14 +102,14 @@
                 </div>
                 {#if qrCodeData}
                     <div class="flex justify-center items-center mr-2">
-                        <QrCode value={pcn} size=200 />
+                        <QrCode value={pcn} size=200 aria-label="QR code for additional information" />
                     </div>
                 {/if}
             </div>
         </div>
     </div>
 </div>
-  
+
 <style>
     .perspective-1000 {
         perspective: 1000px;
