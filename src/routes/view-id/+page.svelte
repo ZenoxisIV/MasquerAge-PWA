@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Label, Input, Modal } from 'flowbite-svelte';
+	import { Button, Card, Label, Input, Modal, Toggle } from 'flowbite-svelte';
     import IDCard from "./IDCard.svelte";
 
 	let pcn: string = "";
@@ -7,6 +7,11 @@
     let qrCodeData: string;
 	let errorMessage: string;
 	let showModal: boolean = false;
+	let isDigital: boolean = true;
+
+	function toggleDigitalID(): void {
+		isDigital = !isDigital;
+	}
 
 	async function fetchUserDetails(): Promise<void> {
 		if (!pcn.trim()) return;
@@ -43,6 +48,7 @@
 				</div>
 				<Input bind:value={pcn} type="text" name="pcn" placeholder="Enter your PCN" required />
 			</Label>
+			<Toggle size="default" checked on:click={toggleDigitalID}>Digital ID Version</Toggle>
 			<Button type="submit" class="w-full">View MOSIP ID</Button>
 		</form>
 
@@ -68,8 +74,9 @@
 			qrCodeData={qrCodeData} 
 			photo={user.photo}
 			sex={user.sex}
-			bloodType='O'
-			civilStatus='single'
+			bloodType={user.bloodType}
+			maritalStatus={user.maritalStatus}
+			isDigital={isDigital}
 		/>
   	{/if}
     <svelte:fragment slot="footer">

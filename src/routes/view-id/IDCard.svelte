@@ -8,9 +8,11 @@
     export let dateOfBirth: string;
     export let sex: string;
     export let bloodType: string;
-    export let civilStatus: string;
+    export let maritalStatus: string;
     export let qrCodeData: any;
     export let photo: string;
+
+    export let isDigital: boolean;
 
     const formattedDOB = new Date(dateOfBirth).toLocaleDateString('en-US', {
         month: 'long',
@@ -35,15 +37,15 @@
 >
     <div class={`relative w-full h-full transition-transform duration-500 transform-style-preserve-3d ${isFlipped ? 'rotate-y-180' : ''}`}>
         <!-- Front -->
-        <div class="absolute w-full h-full backface-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8" 
+        <div class="absolute w-full h-full backface-hidden rounded-3xl shadow-2xl bg-gradient-to-br from-[#B22222] via-[#F8F9FA] to-[#5A7D5A] text-black p-8" 
             aria-hidden={isFlipped}
         >
             <div class="flex flex-col items-center">
                 <div class="text-center text-sm">
-                    <p class="font-bold">REPUBLIKA NG PILIPINAS</p>
-                    <p>Republic of the Philippines</p>
-                    <p class="font-bold mt-2">PAMBANSANG PAGKAKAKILANLAN</p>
-                    <p>Philippine Identification Card</p>
+                    <p class="font-bold">UNIBERSIDAD NG PILIPINAS</p>
+                    <p>University of the Philippines</p>
+                    <p class="font-bold mt-2">PAGKAKAKILANLAN SA MOSIP</p>
+                    <p>MOSIP Identification Card</p>
                 </div>
             </div>
             <div class="flex flex-row justify-between items-center mt-8">
@@ -73,31 +75,33 @@
                         <p class="font-bold">{formattedDOB}</p>
                     </div>
                 </div>
-                {#if pcn}
+                {#if (pcn && isDigital)}
                     <div class="flex justify-center items-center mr-2">
                         <QrCode value={pcn.replace("-", "")} size=150 aria-label="QR code for PCN {pcn}" />
                     </div>
+                {:else}
+                    <div class="pr-40"></div>
                 {/if}
             </div>
         </div>
     
         <!-- Back -->
-        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-blue-500 via-white to-red-500 text-black p-8 border-2" 
+        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-[#B22222] via-[#F8F9FA] to-[#5A7D5A] text-black p-8 border-2" 
             aria-hidden={!isFlipped}
         >
             <div class="flex justify-between items-center h-full">
                 <div class="text-sm space-y-4 text-left">
                     <div>
-                        <p class="italic">KASARIAN / SEX</p>
+                        <p class="italic">KASARIAN/SEX</p>
                         <p class="font-bold">{sex.toUpperCase()}</p>
                     </div>
                     <div>
-                        <p class="italic">URI NG DUGO / BLOOD TYPE</p>
-                        <p class="font-bold">{bloodType.toUpperCase()}</p>
+                        <p class="italic">URI NG DUGO/BLOOD TYPE</p>
+                        <p class="font-bold">{bloodType}</p>
                     </div>
                     <div>
-                        <p class="italic">KALAGAYANG SIBIL / MARITAL STATUS</p>
-                        <p class="font-bold">{civilStatus.toUpperCase()}</p>
+                        <p class="italic">KALAGAYANG SIBIL/MARITAL STATUS</p>
+                        <p class="font-bold">{maritalStatus.toUpperCase()}</p>
                     </div>
                 </div>
                 {#if qrCodeData}

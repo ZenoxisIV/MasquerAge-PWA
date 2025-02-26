@@ -7,6 +7,22 @@
 		{ value: 'Female', name: 'Female' },
 	];
 
+	let maritalStatusOptions = [
+		{ value: 'Single', name: 'Single' },
+		{ value: 'Married', name: 'Married' },
+		{ value: 'Divorced', name: 'Divorced' },
+		{ value: 'Separared', name: 'Separared' },
+		{ value: 'Widowed', name: 'Widowed' },
+	];
+
+	let bloodTypeOptions = [
+		{ value: 'A+', name: 'A+' },
+		{ value: 'A-', name: 'A-' },
+		{ value: 'B+', name: 'B-' },
+		{ value: 'AB+', name: 'AB-' },
+		{ value: 'O+', name: 'O-' },
+	];
+
 	let file: File | null = null;
 	let fileBase64 = "";
 
@@ -74,21 +90,37 @@
 			</Label>
 		</div>
 
-		<Label class="space-y-2">
-			<div class="mb-2">
-				<span>Place of Birth:</span>
-			</div>
-			<Input class="w-full md:w-1/2" type="text" name="placeOfBirth" placeholder="Manila City, Metro Manila" required />
-		</Label>
+		<div class="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+			<Label class="space-y-2">
+				<div class="mb-2">
+					<span>Place of Birth:</span>
+				</div>
+				<Input class="w-full md:w-100" type="text" name="placeOfBirth" placeholder="Manila City, Metro Manila" required />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<div class="mb-2">
+					<span>Civil Status:</span>
+				</div>
+				<Select name="maritalStatus" items={maritalStatusOptions} placeholder="Choose an option..." required />
+			</Label>
+			<Label class="space-y-2 flex-1">
+				<div class="mb-2">
+					<span>Blood Type:</span>
+				</div>
+				<Select name="bloodType" items={bloodTypeOptions} placeholder="Choose an option..." required />
+			</Label>
+		</div>
 
-		<Label class="space-y-2">
-			<div class="mb-2">
-				<span>Add Photo:</span>
-			</div>
-			<Fileupload on:change={onFileInput} />
-			<Helper>PNG or JPG (MAX. 800x400px).</Helper>
-			<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
-		</Label>
+		<div class="flex flex-col md:space-x-4 space-y-4 md:space-y-0">
+			<Label class="space-y-2">
+				<div class="mb-2">
+					<span>Add Photo:</span>
+				</div>
+				<Fileupload on:change={onFileInput} />
+				<Helper>PNG or JPG (MAX. 800x400px).</Helper>
+				<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
+			</Label>
+		</div>
 
 		<Button type="submit" class="w-full md:w-1/4 mx-auto">Generate MOSIP ID</Button>
 	</form>

@@ -21,6 +21,8 @@ export const actions = {
     const sex = formData.get("sex") as string | null;
     const dateOfBirth = new Date(formData.get("dateOfBirth") as string);
     const placeOfBirth = formData.get("placeOfBirth") as string | null;
+    const maritalStatus = formData.get("maritalStatus") as string | null;
+    const bloodType = formData.get("bloodType") as string | null;
     const imageAttachment = formData.get("imageAttachment") as string | null;
     
     await db.insert(usersTable).values({
@@ -33,6 +35,8 @@ export const actions = {
       sex: sex?.trim(),
       dateOfBirth: dateOfBirth.toISOString().split('T')[0], // YYYY-MM-DD
       placeOfBirth: placeOfBirth?.trim(),
+      maritalStatus: maritalStatus?.trim(),
+      bloodType: bloodType?.trim(),
       photo: imageAttachment
     });
   },
