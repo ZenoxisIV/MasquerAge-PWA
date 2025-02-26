@@ -2,12 +2,26 @@ import { json, type RequestHandler } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
 import { usersTable } from "$lib/server/db/schema";
+import pino from "pino";
+
+const logger: pino.Logger = pino({
+	level: import.meta.env.MODE === "production" ? "info" : "debug",
+	transport: import.meta.env.MODE === "development" ? 
+		{ 
+			target: "pino-pretty", 
+			options: { 
+				colorize: true,
+				levelFirst: true,
+				translateTime: true
+			}
+		} : undefined,
+});
 
 function formatDate(date: Date): string {
-    const day: string = date.getDate().toString().padStart(2, '0');
-    const month: string = date.toLocaleString('default', { month: 'long' });
-    const year: number = date.getFullYear();
-    return `${day} ${month} ${year}`;
+	const day: string = date.getDate().toString().padStart(2, '0');
+	const month: string = date.toLocaleString('default', { month: 'long' });
+	const year: number = date.getFullYear();
+	return `${day} ${month} ${year}`;
 }
 
 function generateQRCode(user: any): string {
@@ -53,8 +67,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		const qrCodeData = generateQRCode(user);
 
 		return json({ user, qrCodeData });
-	} catch (error) {
-		console.error("Database error:", error);
+	} catch (error: unknown) {
+		logger.error({ error }, "Database error");
 		return json({ error: "Internal Server Error" }, { status: 500 });
 	}
 };
