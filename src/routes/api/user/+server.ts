@@ -25,9 +25,7 @@ function formatDate(date: Date): string {
 }
 
 function generateQRCode(user: any): string {
-	const dob: Date = new Date(user.dateOfBirth);
-	const formattedDOB: string = new Date(dob.getTime() + Math.abs(dob.getTimezoneOffset() * 60000))
-		.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+	const dob: string = new Date(user.dateOfBirth).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 	return JSON.stringify({
 		DateIssued: formatDate(new Date()),
@@ -39,7 +37,7 @@ function generateQRCode(user: any): string {
 			mName: user.middleName.toUpperCase(),
 			sex: user.sex,
 			BF: "[1,1]",
-			DOB: formattedDOB,
+			DOB: dob,
 			POB: user.placeOfBirth,
 			PCN: user.pcn,
 		},

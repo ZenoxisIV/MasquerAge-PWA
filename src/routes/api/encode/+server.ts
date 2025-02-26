@@ -33,7 +33,7 @@ export const GET: RequestHandler = async ({ url }): Promise<Response> => {
             return json({ error: "PCN and Date of Birth are required" }, { status: 400 });
         }
 
-        const dobMOSIP: string = dobDB.replace(/-/g, '/');
+        const dobMOSIP: string = dobDB.split("T")[0].replace(/-/g, '/');
 
         const uinResult: { uin: string }[] = await db
             .select({ uin: usersTable.uin })
