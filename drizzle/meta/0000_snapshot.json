@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "81e1ec63-f1b4-4601-af77-ac4861debcf4",
+  "id": "b1353ca2-31f5-4c89-b0cc-a533024dde25",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -16,65 +16,79 @@
         },
         "pcn": {
           "name": "pcn",
-          "type": "text",
+          "type": "varchar(19)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "uin": {
           "name": "uin",
-          "type": "text",
+          "type": "varchar(10)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "firstName": {
           "name": "firstName",
-          "type": "text",
+          "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "middleName": {
           "name": "middleName",
-          "type": "text",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "lastName": {
           "name": "lastName",
-          "type": "text",
+          "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "suffix": {
           "name": "suffix",
-          "type": "text",
+          "type": "varchar(5)",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
         "sex": {
           "name": "sex",
-          "type": "text",
+          "type": "enum('Male','Female')",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "maritalStatus": {
+          "name": "maritalStatus",
+          "type": "enum('Single','Married','Divorced','Separated','Widowed')",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "bloodType": {
+          "name": "bloodType",
+          "type": "enum('A+','A-','B+','B-','AB+','AB-','O+','O-')",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         },
         "dateOfBirth": {
           "name": "dateOfBirth",
           "type": "date",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "placeOfBirth": {
           "name": "placeOfBirth",
-          "type": "text",
+          "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "autoincrement": false
         },
         "photo": {
