@@ -29,8 +29,8 @@
 					<p class="text-sm dark:text-gray-400 sm:text-center">This project is part of the CS 198/199 Undergraduate Program.</p>
 				</div>
 				<div class="flex mt-4 space-x-6 rtl:space-x-reverse sm:justify-center md:mt-0">
-					<FooterIcon href="/">
-						<GithubSolid class="mt-5 w-8 h-8 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" />
+					<FooterIcon href="https://github.com/ZenoxisIV/CS-199-Anonymous-Age-Verification" target="_blank">
+						<GithubSolid class="mt-4 w-8 h-8 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" />
 					</FooterIcon>
 				</div>
 			</div>
