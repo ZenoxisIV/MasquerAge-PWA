@@ -11,7 +11,7 @@
 		{ value: 'Single', name: 'Single' },
 		{ value: 'Married', name: 'Married' },
 		{ value: 'Divorced', name: 'Divorced' },
-		{ value: 'Separared', name: 'Separared' },
+		{ value: 'Separated', name: 'Separated' },
 		{ value: 'Widowed', name: 'Widowed' },
 	];
 
