@@ -24,55 +24,53 @@ function formatDate(date: Date): string {
 	return `${day} ${month} ${year}`;
 }
 
-function generateQRCode(user: any, mode: number = 1): string {
+function generateQRCode(user: any, isDigital: string | null = 'false'): string {
 	const dob: string = new Date(user.dateOfBirth).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
-	switch (mode) {
-		case 1:
-			return JSON.stringify({
-				DateIssued: formatDate(new Date()),
-				Issuer: "PSA",
-				subject: {
-					Suffix: user.suffix,
-					lName: user.lastName.toUpperCase(),
-					fName: user.firstName.toUpperCase(),
-					mName: user.middleName.toUpperCase(),
-					sex: user.sex,
-					BF: "[1,1]",
-					DOB: dob,
-					POB: user.placeOfBirth,
-					PCN: user.pcn,
-				},
-				alg: "EDDSA",
-				signature: "TU9TSVAgaXMgYXdlc29tZSE=",
-			});
-		case 2:
-			return JSON.stringify({
-				bd: user.dateOfBirth,
-				bf: null,
-				bt: user.bloodType,
-				iat: 1234567890,
-				id: "ABC1234",
-				iss: "national-id.gov.ph",
-				ms: user.maritalStatus,
-				n_f: user.firstName.toUpperCase(),
-				n_l: user.lastName.toUpperCase(),
-				n_m: user.middleName.toUpperCase(),
-				n_s: user.suffix,
-				p: user.photo,
-				pcn: (user.pcn).replace('-', ''),
-				pob: user.placeOfBirth.toUpperCase(),
-				s: user.sex,
-				v: "2.0",
-				z: "TU9TSVAgaXMgYXdlc29tZSE="
-			});
-		default:
-			return "";
+	if (isDigital === 'false') {
+		return JSON.stringify({
+			DateIssued: formatDate(new Date()),
+			Issuer: "PSA",
+			subject: {
+				Suffix: user.suffix,
+				lName: user.lastName.toUpperCase(),
+				fName: user.firstName.toUpperCase(),
+				mName: user.middleName.toUpperCase(),
+				sex: user.sex,
+				BF: "[1,1]",
+				DOB: dob,
+				POB: user.placeOfBirth,
+				PCN: user.pcn,
+			},
+			alg: "EDDSA",
+			signature: "TU9TSVAgaXMgYXdlc29tZSE=",
+		});
+	} else {
+		return JSON.stringify({
+			bd: user.dateOfBirth,
+			bf: null,
+			bt: user.bloodType,
+			iat: 1234567890,
+			id: "ABC1234",
+			iss: "national-id.gov.ph",
+			ms: user.maritalStatus,
+			n_f: user.firstName.toUpperCase(),
+			n_l: user.lastName.toUpperCase(),
+			n_m: user.middleName.toUpperCase(),
+			n_s: user.suffix,
+			p: user.photo,
+			pcn: (user.pcn).replace('-', ''),
+			pob: user.placeOfBirth.toUpperCase(),
+			s: user.sex,
+			v: "2.0",
+			z: "TU9TSVAgaXMgYXdlc29tZSE="
+		});
 	}
 }
 
 export const GET: RequestHandler = async ({ url }) => {
 	const pcn: string | null = url.searchParams.get("pcn");
+	const isDigital: string | null = url.searchParams.get("bool");
 
 	if (!pcn) {
 		return json({ error: "PCN is required" }, { status: 400 });
@@ -87,7 +85,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		const user = result[0];
 
-		const qrCodeData = generateQRCode(user);
+		const qrCodeData = generateQRCode(user, isDigital);
 
 		return json({ user, qrCodeData });
 	} catch (error: unknown) {

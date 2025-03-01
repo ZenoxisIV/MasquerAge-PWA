@@ -17,7 +17,7 @@
 		if (!pcn.trim()) return;
 
 		try {
-			const response = await fetch(`/api/user?pcn=${encodeURIComponent(pcn)}`);
+			const response = await fetch(`/api/user?pcn=${encodeURIComponent(pcn.trim())}&&bool=${encodeURIComponent(isDigital)}`);
 			const data = await response.json();
 
 			if (response.ok) {
@@ -34,7 +34,7 @@
 </script>
 
 <svelte:head>
-	<title>AgeCloak | View</title>
+	<title>MasquerAge | View</title>
 	<meta name="description" content="View MOSIP ID" />
 </svelte:head>
 
