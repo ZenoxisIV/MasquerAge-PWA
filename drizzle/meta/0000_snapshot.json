@@ -1,126 +1,147 @@
 {
-  "version": "5",
-  "dialect": "mysql",
-  "id": "b1353ca2-31f5-4c89-b0cc-a533024dde25",
+  "id": "f79a6eb8-2a9f-45d2-b84a-95d9ed74b400",
   "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
   "tables": {
-    "users": {
+    "public.users": {
       "name": "users",
+      "schema": "",
       "columns": {
         "id": {
           "name": "id",
-          "type": "int",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": true
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
         },
         "pcn": {
           "name": "pcn",
           "type": "varchar(19)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "uin": {
           "name": "uin",
           "type": "varchar(10)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "firstName": {
           "name": "firstName",
           "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "middleName": {
           "name": "middleName",
           "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "lastName": {
           "name": "lastName",
           "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "suffix": {
           "name": "suffix",
           "type": "varchar(5)",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         },
         "sex": {
           "name": "sex",
-          "type": "enum('Male','Female')",
+          "type": "sex",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false
         },
         "maritalStatus": {
           "name": "maritalStatus",
-          "type": "enum('Single','Married','Divorced','Separated','Widowed')",
+          "type": "maritalStatus",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false
         },
         "bloodType": {
           "name": "bloodType",
-          "type": "enum('A+','A-','B+','B-','AB+','AB-','O+','O-')",
+          "type": "bloodType",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": false
         },
         "dateOfBirth": {
           "name": "dateOfBirth",
           "type": "date",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "placeOfBirth": {
           "name": "placeOfBirth",
           "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
+          "notNull": true
         },
         "photo": {
           "name": "photo",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "users_id": {
-          "name": "users_id",
-          "columns": [
-            "id"
-          ]
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
-      "checkConstraint": {}
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
+  "enums": {
+    "public.bloodType": {
+      "name": "bloodType",
+      "schema": "public",
+      "values": [
+        "A+",
+        "A-",
+        "B+",
+        "B-",
+        "AB+",
+        "AB-",
+        "O+",
+        "O-"
+      ]
+    },
+    "public.maritalStatus": {
+      "name": "maritalStatus",
+      "schema": "public",
+      "values": [
+        "Single",
+        "Married",
+        "Divorced",
+        "Separated",
+        "Widowed"
+      ]
+    },
+    "public.sex": {
+      "name": "sex",
+      "schema": "public",
+      "values": [
+        "Male",
+        "Female"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
   "views": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "internal": {
-    "tables": {},
-    "indexes": {}
+    "tables": {}
   }
 }
