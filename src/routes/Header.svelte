@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import logo from '$lib/images/agecloak.png';
+	import logo from '$lib/images/MasquerAge.png';
 	import { DarkMode, Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 	$: activeUrl = $page.url.pathname;
 </script>
@@ -8,7 +8,7 @@
 <Navbar class="bg-primary-50 dark:bg-[#0f1c24] shadow-md p-2">
 	<NavBrand href="/">
 		<img src={logo} class="me-3 h-6 sm:h-9" alt="Flowbite Logo" />
-		<span class="self-center whitespace-nowrap text-xl font-semibold text-gray-900 dark:text-gray-100">AgeCloak</span>
+		<span class="self-center whitespace-nowrap text-xl font-semibold text-gray-900 dark:text-gray-100">MasquerAge</span>
 	</NavBrand>
 	<NavHamburger />
 	<div class="ms-auto flex items-center text-gray-500 dark:text-gray-400 sm:order-2">

@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>AgeCloak | Scan</title>
+	<title>MasquerAge | Scan</title>
 	<meta name="description" content="QR Scanner" />
 </svelte:head>
 

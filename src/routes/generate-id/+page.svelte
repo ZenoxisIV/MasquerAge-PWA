@@ -40,7 +40,7 @@
 </script>
 
 <svelte:head>
-	<title>AgeCloak | Create</title>
+	<title>MasquerAge | Create</title>
 	<meta name="description" content="Create a MOSIP ID" />
 </svelte:head>
 
