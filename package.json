@@ -53,6 +53,7 @@
 	"dependencies": {
 		"@neondatabase/serverless": "^0.10.4",
 		"@sveu/browser": "^1.0.1",
+		"browser-image-compression": "^2.0.2",
 		"drizzle-orm": "^0.40.0",
 		"jsqr": "^1.4.0",
 		"pino": "^9.6.0",

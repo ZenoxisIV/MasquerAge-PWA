@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button, Label, Input, Select, Fileupload, Helper } from 'flowbite-svelte';
 	import { base64 } from "@sveu/browser";
+	import imageCompression from 'browser-image-compression';
 
 	let sexAtBirth = [
 		{ value: 'Male', name: 'Male' },
@@ -23,18 +24,31 @@
 		{ value: 'O+', name: 'O-' },
 	];
 
-	let file: File | null = null;
+	let imageFile: File | null = null;
 	let fileBase64 = "";
 
-	function onFileInput(e: Event) {
+	async function onFileInput(e: Event) {
 		const target = e.target as HTMLInputElement;
 		if (target.files?.length) {
-			file = target.files[0];
+			imageFile = target.files[0];
 
-			const base64Store = base64(file);
-			base64Store.subscribe(value => {
-				fileBase64 = value.replace(/^data:image\/\w+;base64,/, "");
-			});
+			const options = {
+				maxSizeMB: 0.1,
+				maxWidthOrHeight: 128,
+				initialQuality: 1,
+				useWebWorker: true,
+				alwaysKeepResolution: false,
+			}
+
+			try {
+				const compressedFile = await imageCompression(imageFile, options);
+				const base64Store = base64(compressedFile);
+				base64Store.subscribe(value => {
+					fileBase64 = value.replace(/^data:image\/\w+;base64,/, "");
+				});
+			} catch (error) {
+				console.log(error);
+			}
 		}
 	}
 </script>
