@@ -45,14 +45,15 @@ const generateFakeUser = () => {
 
 for (let i = 1; i <= numberOfQRCodes; i++) {
     const jsonString = JSON.stringify(generateFakeUser());
-    const outputPath = path.join(dirPath, `qrcode_${i}.png`);
+    const paddedIndex = String(i).padStart(3, '0');
+    const outputPath = path.join(dirPath, `qrcode_${paddedIndex}.png`);
     
     QRCode.toFile(outputPath, jsonString, {
         width: 256,
         height: 256
     }).then(() => {
-        console.log(`QR Code ${i} saved to`, outputPath);
+        console.log(`QR Code ${paddedIndex} saved to`, outputPath);
     }).catch(err => {
-        console.error(`Error generating QR Code ${i}:`, err);
+        console.error(`Error generating QR Code ${paddedIndex}:`, err);
     });
 }
