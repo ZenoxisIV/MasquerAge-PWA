@@ -106,7 +106,7 @@
                 </div>
                 {#if qrCodeData && isDigital}
                     <div class="flex justify-center items-center mr-2">
-                        <QrCode value={qrCodeData} size=355 aria-label="QR code for additional information" />
+                        <QrCode value={qrCodeData} size=285 aria-label="QR code for additional information" />
                     </div>
                 {:else if qrCodeData && !isDigital}
                     <div class="flex justify-center items-center mr-2">

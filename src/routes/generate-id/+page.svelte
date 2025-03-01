@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { Button, Label, Input, Select, Fileupload, Helper } from 'flowbite-svelte';
 	import { base64 } from "@sveu/browser";
-	import imageCompression from 'browser-image-compression';
-	import { loadImage, cropImage, convertToGrayscale, canvasToFile } from './utils/canvasHandlers'
 
 	let sexAtBirth = [
 		{ value: 'Male', name: 'Male' },
@@ -33,25 +31,11 @@
 		if (target.files?.length) {
 			imageFile = target.files[0];
 
-			const options = {
-				maxSizeMB: 0.001,
-				maxWidthOrHeight: 128,
-				initialQuality: 0.7,
-				useWebWorker: true,
-				alwaysKeepResolution: false,
-			}
-
 			try {
-				const image = await loadImage(imageFile);
-				const croppedCanvas = cropImage(image, 0.6);
-				const bwCanvas = convertToGrayscale(croppedCanvas);
-
-				const croppedFile = await canvasToFile(bwCanvas, imageFile.type);
-					const compressedFile = await imageCompression(croppedFile, options);
-					const base64Store = base64(compressedFile);
-					base64Store.subscribe(value => {
-						fileBase64 = value.replace(/^data:image\/\w+;base64,/, "");
-					});
+				const base64Store = base64(imageFile);
+				base64Store.subscribe(value => {
+					fileBase64 = value.replace(/^data:image\/\w+;base64,/, "");
+				});
 			} catch (error) {
 				console.log(error);
 			}
