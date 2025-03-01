@@ -59,7 +59,7 @@ function generateQRCode(user: any, isDigital: string | null = 'false'): string {
 			n_m: user.middleName.toUpperCase(),
 			n_s: user.suffix,
 			p: user.photo,
-			pcn: (user.pcn).replace('-', ''),
+			pcn: (user.pcn).replace(/-/g, ''),
 			pob: user.placeOfBirth.toUpperCase(),
 			s: user.sex,
 			v: "2.0",

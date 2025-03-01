@@ -77,7 +77,7 @@
                 </div>
                 {#if (pcn && isDigital)}
                     <div class="flex justify-center items-center mr-2">
-                        <QrCode value={pcn.replace("-", "")} size=150 aria-label="QR code for PCN {pcn}" />
+                        <QrCode value={pcn.replace(/-/g, "")} size=150 aria-label="QR code for PCN {pcn}" />
                     </div>
                 {:else}
                     <div class="pr-40"></div>
