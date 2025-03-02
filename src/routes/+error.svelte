@@ -2,8 +2,8 @@
     import { Button, P } from 'flowbite-svelte';
 </script>
 
-<main class="bg-gray-50 dark:bg-gray-900">
-    <div class="flex flex-col items-center justify-center px-6 pt-8 mx-auto md:h-screen pt:mt-0 dark:bg-gray-900">
+<main class="bg-primary-50 dark:bg-[#0f1c24]">
+    <div class="flex flex-col items-center justify-center mx-auto md:h-screen pt:mt-0 dark:bg-[#0f1c24]">
         <div class="text-center xl:max-w-4xl">
             <h2 class="mb-2 text-2xl font-semibold text-gray-700 dark:text-gray-300">
                 404

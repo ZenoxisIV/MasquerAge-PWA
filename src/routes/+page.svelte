@@ -78,7 +78,7 @@
 				</div>
 				<Input type="date" name="dateOfBirth" bind:value={dateOfBirth} placeholder="YYYY-MM-DD" required />
 			</Label>
-			<Button type="submit" class="w-full">Validate ID</Button>
+			<Button type="submit" class="w-full">Validate MOSIP ID</Button>
 		</form>
 	</Card>
 	<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
