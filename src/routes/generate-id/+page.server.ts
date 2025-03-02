@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { usersTable } from '$lib/server/db/schema';
+import { usersTable, userDemographicsTable } from '$lib/server/db/schema';
 
 function generatePCN(): string {
   const generateSegment = () => Array.from({ length: 4 }, () => Math.floor(Math.random() * 10)).join('');
@@ -25,19 +25,25 @@ export const actions = {
     const bloodType = formData.get("bloodType") as string | null;
     const imageAttachment = formData.get("imageAttachment") as string | null;
     
+    const pcn = generatePCN();
+
     await db.insert(usersTable).values({
-      pcn: generatePCN(),
-      uin: generateUIN(),
-      firstName: firstName?.trim(),
-      middleName: middleName?.trim(),
-      lastName: lastName?.trim(),
-      suffix: suffix?.trim(),
-      sex: sex?.trim(),
-      dateOfBirth: dateOfBirth.toISOString().split('T')[0], // YYYY-MM-DD
-      placeOfBirth: placeOfBirth?.trim(),
-      maritalStatus: maritalStatus?.trim(),
-      bloodType: bloodType?.trim(),
-      photo: imageAttachment
+        pcn,
+        uin: generateUIN(),
+        photo: imageAttachment
+    });
+    
+    await db.insert(userDemographicsTable).values({
+        pcn,
+        firstName: firstName?.trim(),
+        middleName: middleName?.trim(),
+        lastName: lastName?.trim(),
+        suffix: suffix?.trim(),
+        sex: sex?.trim(),
+        dateOfBirth: dateOfBirth.toISOString().split('T')[0], // YYYY-MM-DD
+        placeOfBirth: placeOfBirth?.trim(),
+        maritalStatus: maritalStatus?.trim(),
+        bloodType: bloodType?.trim()
     });
   },
 };

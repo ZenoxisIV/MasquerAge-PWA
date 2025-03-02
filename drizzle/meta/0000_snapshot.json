@@ -1,29 +1,17 @@
 {
-  "id": "f79a6eb8-2a9f-45d2-b84a-95d9ed74b400",
+  "id": "a3597c2c-329e-4ce7-a628-97c9853539b5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.users": {
-      "name": "users",
+    "public.user_demographics": {
+      "name": "user_demographics",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "pcn": {
           "name": "pcn",
           "type": "varchar(19)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "uin": {
-          "name": "uin",
-          "type": "varchar(10)",
-          "primaryKey": false,
+          "primaryKey": true,
           "notNull": true
         },
         "firstName": {
@@ -80,6 +68,45 @@
         "placeOfBirth": {
           "name": "placeOfBirth",
           "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_demographics_pcn_users_pcn_fk": {
+          "name": "user_demographics_pcn_users_pcn_fk",
+          "tableFrom": "user_demographics",
+          "tableTo": "users",
+          "columnsFrom": [
+            "pcn"
+          ],
+          "columnsTo": [
+            "pcn"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "pcn": {
+          "name": "pcn",
+          "type": "varchar(19)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "uin": {
+          "name": "uin",
+          "type": "varchar(10)",
           "primaryKey": false,
           "notNull": true
         },

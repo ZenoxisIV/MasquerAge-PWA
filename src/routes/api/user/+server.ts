@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
-import { usersTable } from "$lib/server/db/schema";
+import { usersTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
 
 const logger: pino.Logger = pino({
@@ -77,7 +77,23 @@ export const GET: RequestHandler = async ({ url }) => {
 	}
 
 	try {
-		const result = await db.select().from(usersTable).where(eq(usersTable.pcn, pcn));
+		const result = await db
+		.select({
+			pcn: usersTable.pcn,
+			photo: usersTable.photo,
+			firstName: userDemographicsTable.firstName,
+			middleName: userDemographicsTable.middleName,
+			lastName: userDemographicsTable.lastName,
+			suffix: userDemographicsTable.suffix,
+			sex: userDemographicsTable.sex,
+			dateOfBirth: userDemographicsTable.dateOfBirth,
+			placeOfBirth: userDemographicsTable.placeOfBirth,
+			maritalStatus: userDemographicsTable.maritalStatus,
+			bloodType: userDemographicsTable.bloodType
+		})
+		.from(usersTable)
+		.innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
+		.where(eq(usersTable.pcn, pcn));
 
 		if (result.length === 0) {
 			return json({ error: "Invalid credentials" }, { status: 404 });

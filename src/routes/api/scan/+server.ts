@@ -1,7 +1,7 @@
 import { json, type RequestHandler } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
-import { usersTable } from "$lib/server/db/schema";
+import { usersTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
 
 function formatPCN(input: string): string {
@@ -51,9 +51,18 @@ export const POST: RequestHandler = async ({ request }) => {
 		switch (typeof parsedData) {
 			case 'number':
 				const pcn: string = formatPCN(parsedData.toString());
-				const queryResult: { uin: string; dateOfBirth: string, photo: string | null }[] = await db
-					.select({ uin: usersTable.uin, dateOfBirth: usersTable.dateOfBirth, photo: usersTable.photo })
+				const queryResult: { 
+					uin: string; 
+					dateOfBirth: string; 
+					photo: string | null 
+				}[] = await db
+					.select({ 
+						uin: usersTable.uin, 
+						dateOfBirth: userDemographicsTable.dateOfBirth, 
+						photo: usersTable.photo 
+					})
 					.from(usersTable)
+					.innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
 					.where(eq(usersTable.pcn, pcn))
 					.catch((err: unknown) => {
 						logger.error({ err }, "Database query error");
