@@ -18,7 +18,7 @@
 
 	async function fetchUserDetails(): Promise<void> {
 		const options = {
-			maxSizeMB: 0.001,
+			maxSizeMB: 0.003,
 			maxWidthOrHeight: 128,
 			initialQuality: 1,
 			useWebWorker: true,

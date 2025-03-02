@@ -86,7 +86,7 @@
         </div>
     
         <!-- Back -->
-        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-[#B22222] via-[#F8F9FA] to-[#5A7D5A] text-black p-8 border-2" 
+        <div class="absolute w-full h-full backface-hidden rotate-y-180 rounded-3xl shadow-2xl bg-gradient-to-br from-[#B22222] via-[#F8F9FA] to-[#5A7D5A] text-black p-8" 
             aria-hidden={!isFlipped}
         >
             <div class="flex justify-between items-center h-full">
@@ -106,7 +106,7 @@
                 </div>
                 {#if qrCodeData && isDigital}
                     <div class="flex justify-center items-center mr-2">
-                        <QrCode value={qrCodeData} size=285 aria-label="QR code for additional information" />
+                        <QrCode value={qrCodeData} size=330 aria-label="QR code for additional information" />
                     </div>
                 {:else if qrCodeData && !isDigital}
                     <div class="flex justify-center items-center mr-2">

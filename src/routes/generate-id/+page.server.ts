@@ -14,15 +14,15 @@ export const actions = {
   default: async (event) => {
     // TODO: needs server-side validation
     const formData = await event.request.formData();
-    const firstName = formData.get("firstName") as string | null;
+    const firstName = formData.get("firstName") as string;
     const middleName = formData.get("middleName") as string | null;
-    const lastName = formData.get("lastName") as string | null;
-    const suffix = formData.get("suffix") as string | null;
-    const sex = formData.get("sex") as string | null;
+    const lastName = formData.get("lastName") as string;
+    const suffix = formData.get("suffix") as string;
+    const sex = formData.get("sex") as string;
     const dateOfBirth = new Date(formData.get("dateOfBirth") as string);
-    const placeOfBirth = formData.get("placeOfBirth") as string | null;
-    const maritalStatus = formData.get("maritalStatus") as string | null;
-    const bloodType = formData.get("bloodType") as string | null;
+    const placeOfBirth = formData.get("placeOfBirth") as string;
+    const maritalStatus = formData.get("maritalStatus") as string;
+    const bloodType = formData.get("bloodType") as string;
     const imageAttachment = formData.get("imageAttachment") as string | null;
     
     const pcn = generatePCN();

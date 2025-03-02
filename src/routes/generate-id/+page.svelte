@@ -18,9 +18,12 @@
 	let bloodTypeOptions = [
 		{ value: 'A+', name: 'A+' },
 		{ value: 'A-', name: 'A-' },
-		{ value: 'B+', name: 'B-' },
-		{ value: 'AB+', name: 'AB-' },
-		{ value: 'O+', name: 'O-' },
+		{ value: 'B+', name: 'B+' },
+		{ value: 'B-', name: 'B-' },
+		{ value: 'AB+', name: 'AB+' },
+		{ value: 'AB-', name: 'AB-' },
+		{ value: 'O+', name: 'O+' },
+		{ value: 'O-', name: 'O-' },
 	];
 
 	let imageFile: File | null = null;
