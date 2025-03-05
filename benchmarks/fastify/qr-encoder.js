@@ -11,7 +11,7 @@ function generateUIN() {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const dirPath = path.join(__dirname, 'k6-qr-codes');
+const dirPath = path.join(__dirname, 'qr-codes');
 
 if (fs.existsSync(dirPath)) {
     fs.readdirSync(dirPath).forEach(file => {
