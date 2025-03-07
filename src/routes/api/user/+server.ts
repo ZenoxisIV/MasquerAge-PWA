@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
 import { usersTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
+import sharp from "sharp";
 
 const logger: pino.Logger = pino({
 	level: import.meta.env.MODE === "production" ? "info" : "debug",
@@ -24,7 +25,7 @@ function formatDate(date: Date): string {
 	return `${day} ${month} ${year}`;
 }
 
-function generateQRCode(user: any, isDigital: string | null = 'false'): string {
+async function generateQRCode(user: any, isDigital: string | null = 'false'): Promise<string> {
 	const dob: string = new Date(user.dateOfBirth).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
 	if (isDigital === 'false') {
@@ -46,6 +47,13 @@ function generateQRCode(user: any, isDigital: string | null = 'false'): string {
 			signature: "TU9TSVAgaXMgYXdlc29tZSE=",
 		});
 	} else {
+		const processedImg = await sharp(Buffer.from(user.photo, "base64"))
+			.greyscale()
+			.resize(36)
+			.sharpen()
+			.toFormat("webp")
+			.toBuffer();
+
 		return JSON.stringify({
 			bd: user.dateOfBirth,
 			bf: null,
@@ -58,7 +66,7 @@ function generateQRCode(user: any, isDigital: string | null = 'false'): string {
 			n_l: user.lastName.toUpperCase(),
 			n_m: user.middleName.toUpperCase(),
 			n_s: user.suffix,
-			p: user.photo,
+			p: processedImg.toString("base64"),
 			pcn: (user.pcn).replace(/-/g, ''),
 			pob: user.placeOfBirth.toUpperCase(),
 			s: user.sex,
@@ -101,7 +109,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		const user = result[0];
 
-		const qrCodeData = generateQRCode(user, isDigital);
+		const qrCodeData = await generateQRCode(user, isDigital);
 
 		return json({ user, qrCodeData });
 	} catch (error: unknown) {

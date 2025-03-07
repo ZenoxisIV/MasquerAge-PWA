@@ -4,7 +4,7 @@
 
 	onMount(() => {
 		return () => {
-			// stopMedia();
+			stopMedia();
 		};
 	});
 
