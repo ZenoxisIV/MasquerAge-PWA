@@ -12,8 +12,6 @@
     export let qrCodeData: any;
     export let photo: string;
 
-    export let isDigital: boolean;
-
     const formattedDOB = new Date(dateOfBirth).toLocaleDateString('en-US', {
         month: 'long',
         day: 'numeric',
@@ -75,12 +73,10 @@
                         <p class="font-bold">{formattedDOB}</p>
                     </div>
                 </div>
-                {#if (pcn && isDigital)}
+                {#if pcn}
                     <div class="flex justify-center items-center mr-2">
                         <QrCode value={pcn.replace(/-/g, "")} size=150 aria-label="QR code for PCN {pcn}" />
                     </div>
-                {:else}
-                    <div class="pr-40"></div>
                 {/if}
             </div>
         </div>
@@ -104,13 +100,9 @@
                         <p class="font-bold">{maritalStatus.toUpperCase()}</p>
                     </div>
                 </div>
-                {#if qrCodeData && isDigital}
+                {#if qrCodeData}
                     <div class="flex justify-center items-center mr-2">
                         <QrCode value={qrCodeData} size=320 padding=2 aria-label="QR code for additional information" />
-                    </div>
-                {:else if qrCodeData && !isDigital}
-                    <div class="flex justify-center items-center mr-2">
-                        <QrCode value={qrCodeData} size=245 aria-label="QR code for additional information" />
                     </div>
                 {/if}
             </div>

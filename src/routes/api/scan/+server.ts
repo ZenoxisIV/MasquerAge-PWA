@@ -48,72 +48,39 @@ export const POST: RequestHandler = async ({ request }) => {
 		let uin: string = "";
 		let dobDB: string = "";
 		let photo: string | null = "";
-		switch (typeof parsedData) {
-			case 'number':
-				const pcn: string = formatPCN(parsedData.toString());
-				const queryResult: { 
-					uin: string; 
-					dateOfBirth: string; 
-					photo: string | null 
-				}[] = await db
-					.select({ 
-						uin: usersTable.uin, 
-						dateOfBirth: userDemographicsTable.dateOfBirth, 
-						photo: usersTable.photo 
-					})
-					.from(usersTable)
-					.innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
-					.where(eq(usersTable.pcn, pcn))
-					.catch((err: unknown) => {
-						logger.error({ err }, "Database query error");
-						throw new Error("Database query failed");
-					});
-				
-				uin = queryResult[0].uin;
-				dobDB = queryResult[0].dateOfBirth;
-				photo = queryResult[0].photo;
-
-				break;
-			case 'object':
-				const keysLength: number = Object.keys(parsedData).length;
-				if (keysLength === 5) {
-					const pcn: string = parsedData.subject.PCN;
-					const dateOfBirth: Date = new Date(parsedData.subject.DOB);
-					dobDB = new Date(dateOfBirth.getTime() + Math.abs(dateOfBirth.getTimezoneOffset() * 60000))
-						.toISOString().split("T")[0];
-					
-					const queryResult: { uin: string; photo: string | null }[] = await db
-						.select({ uin: usersTable.uin, photo: usersTable.photo })
-						.from(usersTable)
-						.where(eq(usersTable.pcn, pcn))
-						.catch((err: unknown) => {
-							logger.error({ err }, "Database query error");
-							throw new Error("Database query failed");
-						});
-
-					if (!queryResult.length) {
-						return json({ authStatus: false, error: "Invalid credentials" }, { status: 404 });
-					}
-
-					uin = queryResult[0].uin;
-					photo = queryResult[0].photo;
-				} else if (keysLength === 17) {
-					const pcn: string = formatPCN(parsedData.pcn);
-
-					const queryResult: { uin: string }[] = await db
-						.select({ uin: usersTable.uin })
-						.from(usersTable)
-						.where(eq(usersTable.pcn, pcn))
-						.catch((err: unknown) => {
-							logger.error({ err }, "Database query error");
-							throw new Error("Database query failed");
-						});
-
-					uin = queryResult[0].uin;
-					dobDB = parsedData.bd;
-					photo = parsedData.p;
-				}
-				break;
+		if (typeof parsedData === 'number') { // front qr
+			const pcn = formatPCN(parsedData.toString());
+			const queryResult = await db
+				.select({ 
+					uin: usersTable.uin, 
+					dateOfBirth: userDemographicsTable.dateOfBirth, 
+					photo: usersTable.photo 
+				})
+				.from(usersTable)
+				.innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
+				.where(eq(usersTable.pcn, pcn))
+				.catch((err: unknown) => {
+					logger.error({ err }, "Database query error");
+					throw new Error("Database query failed");
+				});
+			
+			uin = queryResult[0].uin;
+			dobDB = queryResult[0].dateOfBirth;
+			photo = queryResult[0].photo;
+		} else { // back qr
+			const pcn = formatPCN(parsedData.pcn);
+			const queryResult = await db
+				.select({ uin: usersTable.uin })
+				.from(usersTable)
+				.where(eq(usersTable.pcn, pcn))
+				.catch((err: unknown) => {
+					logger.error({ err }, "Database query error");
+					throw new Error("Database query failed");
+				});
+	
+			uin = queryResult[0].uin;
+			dobDB = parsedData.bd;
+			photo = parsedData.p;
 		}
 
 		const dobMOSIP: string = dobDB.replace(/-/g, "/");

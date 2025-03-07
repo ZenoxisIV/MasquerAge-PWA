@@ -10,7 +10,7 @@ const logger: pino.Logger = pino({
 	transport: import.meta.env.MODE === "development" ? 
 		{ 
 			target: "pino-pretty", 
-			options: { 
+			options: {	
 				colorize: true,
 				levelFirst: true,
 				translateTime: true
@@ -18,6 +18,7 @@ const logger: pino.Logger = pino({
 		} : undefined,
 });
 
+<<<<<<< Updated upstream
 function formatDate(date: Date): string {
 	const day: string = date.getDate().toString().padStart(2, '0');
 	const month: string = date.toLocaleString('default', { month: 'long' });
@@ -74,11 +75,39 @@ async function generateQRCode(user: any, isDigital: string | null = 'false'): Pr
 			z: "TU9TSVAgaXMgYXdlc29tZSE="
 		});
 	}
+=======
+async function generateQRCode(user: any): Promise<string> {
+	const processedImg = await sharp(Buffer.from(user.photo, "base64"))
+		.greyscale()
+		.resize(36)
+		.sharpen()
+		.toFormat("webp")
+		.toBuffer();
+
+	return JSON.stringify({
+		bd: user.dateOfBirth,
+		bf: null,
+		bt: user.bloodType,
+		iat: 1234567890,
+		id: "ABC1234",
+		iss: "national-id.gov.ph",
+		ms: user.maritalStatus,
+		n_f: user.firstName.toUpperCase(),
+		n_l: user.lastName.toUpperCase(),
+		n_m: user.middleName.toUpperCase(),
+		n_s: user.suffix,
+		p: processedImg.toString("base64"),
+		pcn: (user.pcn).replace(/-/g, ''),
+		pob: user.placeOfBirth.toUpperCase(),
+		s: user.sex,
+		v: "2.0",
+		z: "TU9TSVAgaXMgYXdlc29tZSE="
+	});
+>>>>>>> Stashed changes
 }
 
 export const GET: RequestHandler = async ({ url }) => {
 	const pcn: string | null = url.searchParams.get("pcn");
-	const isDigital: string | null = url.searchParams.get("bool");
 
 	if (!pcn) {
 		return json({ error: "PCN is required" }, { status: 400 });
@@ -109,7 +138,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		const user = result[0];
 
+<<<<<<< Updated upstream
 		const qrCodeData = await generateQRCode(user, isDigital);
+=======
+		const qrCodeData = await generateQRCode(user);
+>>>>>>> Stashed changes
 
 		return json({ user, qrCodeData });
 	} catch (error: unknown) {

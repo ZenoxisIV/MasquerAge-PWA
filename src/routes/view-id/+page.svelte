@@ -7,17 +7,12 @@
     let qrCodeData: string;
 	let errorMessage: string;
 	let showModal: boolean = false;
-	let isDigital: boolean = true;
-
-	function toggleDigitalID(): void {
-		isDigital = !isDigital;
-	}
 
 	async function fetchUserDetails(): Promise<void> {
 		if (!pcn.trim()) return;
 
 		try {
-			const response = await fetch(`/api/user?pcn=${encodeURIComponent(pcn.trim())}&&bool=${encodeURIComponent(isDigital)}`);
+			const response = await fetch(`/api/user?pcn=${encodeURIComponent(pcn.trim())}`);
 			const data = await response.json();
 
 			if (response.ok) {
@@ -48,7 +43,6 @@
 				</div>
 				<Input bind:value={pcn} type="text" name="pcn" placeholder="Enter your PCN" required />
 			</Label>
-			<Toggle size="default" checked on:click={toggleDigitalID}>Digital ID Version</Toggle>
 			<Button type="submit" class="w-full">View MOSIP ID</Button>
 		</form>
 
@@ -76,7 +70,6 @@
 			sex={user.sex}
 			bloodType={user.bloodType}
 			maritalStatus={user.maritalStatus}
-			isDigital={isDigital}
 		/>
   	{/if}
     <svelte:fragment slot="footer">
