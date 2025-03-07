@@ -1,9 +1,6 @@
 <script lang="ts">
 	import { Button, Card, Label, Input, Modal, Toggle } from 'flowbite-svelte';
     import IDCard from "./IDCard.svelte";
-	import * as utils from "./utils/imageHandlers"
-	import { updateJSONField } from "./utils/jsonHandlers"
-	import imageCompression from 'browser-image-compression';
 
 	let pcn: string = "";
 	let user: any;
@@ -17,14 +14,6 @@
 	}
 
 	async function fetchUserDetails(): Promise<void> {
-		const options = {
-			maxSizeMB: 0.003,
-			maxWidthOrHeight: 128,
-			initialQuality: 1,
-			useWebWorker: true,
-			alwaysKeepResolution: false,
-		}
-
 		if (!pcn.trim()) return;
 
 		try {
@@ -33,16 +22,7 @@
 
 			if (response.ok) {
 				user = data.user;
-
-				const imageFile = utils.base64ToImageFile(user.photo, "image.png", "image/png");
-				const imageElem = await utils.loadImage(imageFile);
-				const croppedCanvas = utils.cropImage(imageElem, 0.55);
-				const bwCanvas = utils.convertToGrayscale(croppedCanvas);
-				const croppedFile = await utils.canvasToFile(bwCanvas, imageFile.type);
-				const compressedFile = await imageCompression(croppedFile, options);
-				const base64String = await utils.convertToBase64(compressedFile);
-
-                qrCodeData = updateJSONField(data.qrCodeData, 'p', base64String);
+                qrCodeData = data.qrCodeData;
 				showModal = true;
 			} else {
 				errorMessage = data.error || "Invalid credentials";

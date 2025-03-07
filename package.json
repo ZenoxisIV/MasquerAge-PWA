@@ -57,6 +57,7 @@
 		"drizzle-orm": "^0.40.0",
 		"jsqr": "^1.4.0",
 		"pino": "^9.6.0",
+		"sharp": "^0.33.5",
 		"svelte-qrcode": "^1.0.1"
 	},
 	"pnpm": {
