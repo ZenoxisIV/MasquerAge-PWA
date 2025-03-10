@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Card, Label, Input, Modal, Toggle } from 'flowbite-svelte';
+	import { Button, Card, Label, Input, Modal } from 'flowbite-svelte';
     import IDCard from "./IDCard.svelte";
 
 	let pcn: string = "";
