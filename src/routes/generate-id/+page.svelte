@@ -124,7 +124,7 @@
 					<span>Add Photo:</span>
 				</div>
 				<Fileupload on:change={onFileInput} />
-				<Helper>PNG or JPG (MAX. 800x400px).</Helper>
+				<Helper>PNG or JPEG (MAX: 400x400px)</Helper>
 				<input type="hidden" name="imageAttachment" bind:value={fileBase64} />
 			</Label>
 		</div>

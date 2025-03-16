@@ -3,9 +3,9 @@
 	import { stream, error, status } from './stores.js';
 	import jsQR from 'jsqr';
 
-	import QRBorder from './QRBorder.svelte';
-	import QRData from './QRData.svelte';
-	import UserMedia from './utils/use-usermedia.svelte';
+	import QRBorder from '$lib/qr-components/QRBorder.svelte';
+	import QRData from '$lib/qr-components/QRData.svelte';
+	import UserMedia from '$lib/qr-components/use-usermedia.svelte';
 
 	export let result: string | null = null;
 	export let stopMediaStream: (() => void) | null = null;
