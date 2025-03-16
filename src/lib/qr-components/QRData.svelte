@@ -7,7 +7,7 @@
 
 	let verifiedPrompt: boolean = false, rejectedPrompt: boolean = false, invalidPrompt: boolean = false;
 	let modalOpen: boolean = false;
-	let result: { age?: number; photo?: string } = {};
+	let result: { isAdult?: boolean; photo?: string } = {};
 
 	async function validateID(data: string): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
@@ -25,11 +25,7 @@
 
 			if (response.ok) {
 				result = res;
-				if (res.age >= 35) {
-					verifiedPrompt = true;
-				} else {
-					rejectedPrompt = true;
-				}
+				result.isAdult ? (verifiedPrompt = true) : (rejectedPrompt = true);
 			} else {
 				invalidPrompt = true;
 			}

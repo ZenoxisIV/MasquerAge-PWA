@@ -1,20 +1,21 @@
 import { json, type RequestHandler } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
-import { usersTable } from "$lib/server/db/schema";
+import { usersTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
 
 const logger: pino.Logger = pino({
     level: import.meta.env.MODE === "production" ? "info" : "debug",
-    transport: import.meta.env.MODE === "development" ? 
-        { 
-            target: "pino-pretty", 
-            options: { 
+    transport: import.meta.env.MODE === "development"
+        ? {
+            target: "pino-pretty",
+            options: {
                 colorize: true,
                 levelFirst: true,
-                translateTime: true
-            }
-        } : undefined,
+                translateTime: true,
+            },
+        }
+        : undefined,
 });
 
 const fetchWithTimeout = (url: string, options: RequestInit, timeout: number = 5000): Promise<Response> => {
@@ -24,64 +25,68 @@ const fetchWithTimeout = (url: string, options: RequestInit, timeout: number = 5
     ]);
 };
 
-export const GET: RequestHandler = async ({ url }): Promise<Response> => {
+export const GET: RequestHandler = async ({ url }) => {
     try {
-        const pcn: string | null = url.searchParams.get("pcn");
-        const dobDB: string | null = url.searchParams.get("dob");
+        const pcn = url.searchParams.get("pcn");
+        const dobDB = url.searchParams.get("dob");
 
         if (!pcn || !dobDB) {
-            return json({ error: "PCN and Date of Birth are required" }, { status: 400 });
+            return json({ error: "Invalid ID" }, { status: 400 });
         }
 
-        const dobMOSIP: string = dobDB.split("T")[0].replace(/-/g, '/');
+        let uin: string = "";
+        let photo: string | null = "";
 
-        const uinResult: { uin: string }[] = await db
-            .select({ uin: usersTable.uin })
+        const queryResult = await db
+            .select({ uin: usersTable.uin, photo: usersTable.photo })
             .from(usersTable)
-            .where(eq(usersTable.pcn, pcn))
-            .catch((err: unknown) => {
-                logger.error({ err }, "Database query error");
-                throw new Error("Database query failed");
-            });
+            .innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
+            .where(eq(usersTable.pcn, pcn));
 
-        if (!uinResult.length) {
-            return json({ authStatus: false, error: "Invalid credentials" }, { status: 404 });
+        if (queryResult.length === 0) {
+            logger.warn(`Invalid PCN lookup: ${pcn}`);
+            return json({ error: "Invalid ID" }, { status: 400 });
         }
 
-        const uin: string = uinResult[0].uin;
+        uin = queryResult[0].uin;
+        photo = queryResult[0].photo;
+        
+        const dobMOSIP = dobDB.split("T")[0].replace(/-/g, '/');
 
-        // Verify DOB via fastAPI
-        const response: Response = await fetchWithTimeout("http://127.0.0.1:3000/dob", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ uin, dob: dobMOSIP })
-        }, 5000).catch((err: unknown) => {
-            logger.error({ err }, "External API request error");
-            throw new Error("Failed to verify DOB");
-        });
+        // Verify DOB via FastAPI
+        let result: { authStatus: boolean };
+        try {
+            const response = await fetchWithTimeout("http://127.0.0.1:3000/dob", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ uin, dob: dobMOSIP })
+            }, 5000);
 
-        if (!response.ok) {
-            logger.error({ status: response.status, statusText: response.statusText }, "External API response error");
-            return json({ authStatus: false, error: "Verification service unavailable" }, { status: 502 });
+            if (!response.ok) {
+                logger.warn(`FastAPI returned ${response.status} - ${response.statusText}`);
+                return json({ error: "Invalid ID" }, { status: 400 });
+            }
+
+            result = await response.json();
+        } catch (error: unknown) {
+            logger.error("FastAPI request failed or timed out");
+            return json({ error: "Invalid ID" }, { status: 400 });
         }
 
-        const result: { authStatus: boolean } = await response.json().catch((err: unknown) => {
-            logger.error({ err }, "Error parsing API response");
-            throw new Error("Invalid API response format");
-        });
-
-        if (result.authStatus) {
-            const getAge = (birthDate: string | Date): number => {
-                const date: Date = birthDate instanceof Date ? birthDate : new Date(birthDate);
-                return Math.floor((new Date().getTime() - date.getTime()) / 3.15576e+10);
-            };
-
-            return json({ authStatus: true, age: getAge(dobDB) });
-        } else {
-            return json({ authStatus: false, error: "Invalid ID" }, { status: 401 });
+        if (!result.authStatus) {
+            logger.warn(`Authentication failed for UIN: ${uin}`);
+            return json({ error: "Invalid ID" }, { status: 400 });
         }
+
+        const calculateAge = (dob: string): number => {
+            const birthDate = new Date(dob);
+            return Math.floor((Date.now() - birthDate.getTime()) / 3.15576e+10);
+        };
+
+        return calculateAge(dobDB) >= 35 ? json({ isAdult: true, photo }) : json({ isAdult: false });
+
     } catch (error: unknown) {
-        logger.error({ error }, "Server error");
-        return json({ error: "Internal server error" }, { status: 500 });
+        logger.error({ error }, "Unexpected server error");
+        return json({ error: "Invalid ID" }, { status: 400 });
     }
 };
