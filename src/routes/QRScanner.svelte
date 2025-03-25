@@ -84,7 +84,7 @@
 
 <UserMedia bind:useUserMedia />
 
-<div bind:this={rootElement} class={`relative w-full max-w-[500px] ${active ? '' : 'hidden'}`}>
+<div bind:this={rootElement} class={`relative w-full max-w-[500px]`}>
 	<div class="relative overflow-hidden pb-[100%] rounded-[10%]">
 		<canvas bind:this={canvas} class="hidden"></canvas>
 		<!-- svelte-ignore a11y-media-has-caption -->
@@ -98,7 +98,7 @@
 </div>
 
 <slot {result}>
-	<QRData active={result !== null} decodedData={result as string} onNewScan={() => (result = null)} />
+	<QRData decodedData={result as string} onNewScan={() => (result = null)} />
 </slot>
 
 <style>
