@@ -3,6 +3,7 @@ import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
 import { usersTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
+import { FASTAPI_URL } from '$env/static/private';
 
 const logger: pino.Logger = pino({
 	level: import.meta.env.MODE === "production" ? "info" : "debug",
@@ -100,9 +101,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		const dobMOSIP: string = dobDB.replace(/-/g, "/");
 
         // Verify DOB via FastAPI
-        let result: { authStatus: boolean };
+        let result: { authStatus: boolean, responseTime: string, errorMessages: string};
 		try {
-			const response = await fetchWithTimeout("http://127.0.0.1:3000/dob", {
+			const response = await fetchWithTimeout(FASTAPI_URL, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({ uin, dob: dobMOSIP })
@@ -114,13 +115,18 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 
 			result = await response.json();
+            logger.info(`Response received at: ${result.responseTime}`);
 		} catch (error: unknown) {
-			logger.error("FastAPI request failed or timed out");
+            logger.warn("FastAPI request failed or timed out");
+            logger.error(error);
 			return json({ error: "Invalid ID" }, { status: 400 });
 		}
 
         if (!result.authStatus) {
             logger.warn(`Authentication failed for UIN: ${uin}`);
+            if (result.errorMessages !== "[]") {
+                logger.error(result.errorMessages);
+            }
             return json({ error: "Invalid ID" }, { status: 400 });
         }
 
