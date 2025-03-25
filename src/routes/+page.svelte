@@ -100,7 +100,7 @@
 	</Modal>
 
 	{#if currentView === "qr"}
-		<section class="flex flex-col justify-center items-center flex-[0.6]">
+		<section class="flex flex-col justify-center items-center flex-[0.6] pb-15">
 			<QRScanner bind:result={qrResult} />
 		</section>
 	{:else}
