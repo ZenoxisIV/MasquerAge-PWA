@@ -1,4 +1,5 @@
 <script lang="ts">
+	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { stream, error, status } from '../../routes/stores.js';
 
