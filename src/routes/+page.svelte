@@ -12,6 +12,19 @@
 
 	let qrResult: string | null = null;
 
+	let timer: number;
+
+	function startCountdown(duration: number, callback: () => void): void {
+		const intervalId = setInterval(() => {
+			timer--;
+			duration--;
+			if (duration < 0) {
+				clearInterval(intervalId);
+				callback();
+			}
+		}, 1000);
+	}
+
 	async function validateID(): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
 		modalOpen = false;
@@ -36,6 +49,13 @@
 			console.error(error);
 			invalidPrompt = true;
 			modalOpen = true;
+		}
+
+		if (modalOpen) {
+			timer = 5;
+			startCountdown(timer, () => {
+				modalOpen = false;
+			});
 		}
 	}
 </script>
@@ -78,7 +98,7 @@
 							</div>
 						{/if}
 					</div>
-					<div class="mt-4 mb-5 flex items-center gap-2 text-lg font-normal text-black dark:text-gray-400">
+					<div class="mt-4 flex items-center gap-2 text-lg font-normal text-black dark:text-gray-400">
 						<CheckCircleSolid class="w-6 h-6 text-green-600 dark:text-green-400 stroke-white stroke-2" />
 						<span class="text-xl">This person is 35 or older.</span>
 					</div>
@@ -86,15 +106,18 @@
 
 			{:else if rejectedPrompt}
 				<CloseCircleSolid class="mx-auto mb-4 text-red-600 w-36 h-36 dark:text-red-400" />
-				<h3 class="mb-5 text-xl font-normal text-black dark:text-gray-400">
+				<h3 class="text-xl font-normal text-black dark:text-gray-400">
 					This person is below 35.
 				</h3>
 			{:else if invalidPrompt}
 				<ExclamationCircleSolid class="mx-auto mb-4 text-yellow-400 w-36 h-36 dark:text-yellow-400" />
-				<h3 class="mb-5 text-xl font-normal text-black dark:text-gray-400">
+				<h3 class="text-xl font-normal text-black dark:text-gray-400">
 					Invalid ID. Please try again.
 				</h3>
 			{/if}
+			<p class="mt-1 mb-5 text-lg font-normal text-black dark:text-gray-400">
+				Closing in {timer} second(s)
+			</p>
 			<Button>Close</Button>
 		</div>
 	</Modal>
