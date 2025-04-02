@@ -1,8 +1,9 @@
-import HttpRequest from './HttpRequest.js';
+import HttpRequest from '../http/HttpRequest.js';
 import ora from 'ora';
 import Table from 'cli-table3';
-import { decodeQRCode } from './QRDecoderEngine.js';
+import { decodeQRCode } from '../qr-manager/QRDecoderEngine.js';
 import pino from 'pino';
+import { processDecoderLogs } from '../qr-manager/QRDecoderLogProcessor.js';
 
 export default class MasquerAgeLoadTest {
     constructor(options = {}) {
@@ -35,22 +36,23 @@ export default class MasquerAgeLoadTest {
 
     async run() {
         this.logger.info(`Starting load test on ${this.targetUrl} with ${this.vus} VUs...\n`);
-        const spinner = ora('Running load test...\n').start();
-
+        
         let results = [];
         let completedRequests = 0;
         const startTime = Date.now();
         const endTime = this.iterations ? null : startTime + this.duration;
+        let clearLogs = true;
 
+        const spinner = ora('Running load test...\n').start();
+        
         // Worker function
         const worker = async (vu) => {
             try {
                 while (this.iterations ? completedRequests < this.iterations : Date.now() < endTime) {
                     if (this.iterations && completedRequests >= this.iterations) break;
-
-                    this.logger.debug(`VU ${vu} sending request #${completedRequests + 1}`);
                     
-                    const result = await this.httpRequest.sendRequest(this.method, this.body ? this.body : decodeQRCode());
+                    const result = await this.httpRequest.sendRequest(this.method, this.body ? this.body : decodeQRCode(clearLogs));
+                    clearLogs = false;
                     results.push(result);
                     completedRequests++;
                 }
@@ -113,37 +115,34 @@ export default class MasquerAgeLoadTest {
 
         // Table for request duration
         const durationTable = new Table({
-            head: ['Metric', 'Avg (ms)', 'Min (ms)', 'Med (ms)', 'Max (ms)', 'p(90) (ms)', 'p(95) (ms)'],
-            colWidths: [20, 15, 15, 15, 15, 15, 15],
-            chars: { 'top': '━', 'top-mid': '╶', 'top-left': '┏', 'top-right': '┓', 'bottom': '━', 'bottom-mid': '╶', 'bottom-left': '┛', 'bottom-right': '┛', 'left': '┃', 'left-mid': '┣', 'mid': '━', 'mid-mid': '╶', 'right': '┃', 'right-mid': '┛', 'middle': '│' },
+            head: ['Overall Transaction Duration', 'Avg (ms)', 'Min (ms)', 'Med (ms)', 'Max (ms)', 'p(90) (ms)', 'p(95) (ms)'],
+            colWidths: [30, 15, 15, 15, 15, 15, 15],
             style: { head: ['cyan'], border: ['grey'], compact: true }
         });
 
         // Table for data sent/received
         const dataTable = new Table({
-            head: ['Metric', 'Avg (bytes)', 'Avg Rate (bytes/s)'],
-            colWidths: [20, 20, 20],
-            chars: { 'top': '━', 'top-mid': '╶', 'top-left': '┏', 'top-right': '┓', 'bottom': '━', 'bottom-mid': '╶', 'bottom-left': '┛', 'bottom-right': '┛', 'left': '┃', 'left-mid': '┣', 'mid': '━', 'mid-mid': '╶', 'right': '┃', 'right-mid': '┛', 'middle': '│' },
+            head: ['Client-side Data Metrics', 'Avg (bytes)', 'Avg Rate (bytes/s)'],
+            colWidths: [30, 20, 20],
             style: { head: ['yellow'], border: ['grey'], compact: true }
         });
 
         // Table for HTTP requests
         const httpReqTable = new Table({
-            head: ['Metric', 'Count', 'Rate (req/s)'],
-            colWidths: [20, 20, 20],
-            chars: { 'top': '━', 'top-mid': '╶', 'top-left': '┏', 'top-right': '┓', 'bottom': '━', 'bottom-mid': '╶', 'bottom-left': '┛', 'bottom-right': '┛', 'left': '┃', 'left-mid': '┣', 'mid': '━', 'mid-mid': '╶', 'right': '┃', 'right-mid': '┛', 'middle': '│' },
+            head: ['Client-side Requests', 'Count', 'Rate (req/s)'],
+            colWidths: [30, 25, 20],
             style: { head: ['magenta'], border: ['grey'], compact: true }
         });
 
         const stats = this.calculateStats(metrics.http_req_duration);
         durationTable.push([ 
             'http_req_duration',
-            this.colorize(stats.avg.toFixed(5), 'green'),
-            this.colorize(stats.min.toFixed(5), 'blue'),
-            this.colorize(stats.med.toFixed(5), 'yellow'),
-            this.colorize(stats.max.toFixed(5), 'red'),
-            this.colorize(stats.p90.toFixed(5), 'cyan'),
-            this.colorize(stats.p95.toFixed(5), 'magenta'),
+            this.colorize(stats.avg ? stats.avg.toFixed(5) : '-', 'green'),
+            this.colorize(stats.min ? stats.min.toFixed(5): '-', 'blue'),
+            this.colorize(stats.med ? stats.med.toFixed(5): '-', 'yellow'),
+            this.colorize(stats.max ? stats.max.toFixed(5) : '-', 'red'),
+            this.colorize(stats.p90 ? stats.p90.toFixed(5): '-', 'cyan'),
+            this.colorize(stats.p95 ? stats.p95.toFixed(5) : '-', 'magenta'),
         ]);;
 
         dataTable.push([ 
@@ -168,7 +167,7 @@ export default class MasquerAgeLoadTest {
         console.log(durationTable.toString() + '\n');
         console.log(httpReqTable.toString() + '\n');
         console.log(dataTable.toString() + '\n');
-        console.log(`\n`);
+        console.log(processDecoderLogs());
     }
 
     colorize(value, color) {

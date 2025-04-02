@@ -4,20 +4,26 @@ import { fileURLToPath } from 'url';
 import { performance } from 'perf_hooks';
 import { Jimp } from 'jimp';
 import jsQR from 'jsqr';
+import pino from 'pino';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const qrDir = path.join(__dirname, 'qr-codes');
 const logFilePath = path.join(__dirname, 'qr_performance.log');
 
-if (!fs.existsSync(qrDir)) {
-    // console.error(`QR directory '${qrDir}' not found!`);
-    process.exit(1);
-}
+const logger = pino({
+    transport: {
+        target: 'pino/file',
+        options: {
+            destination: logFilePath,
+            mkdir: true
+        }
+    }
+});
 
-if (fs.existsSync(logFilePath)) {
-    fs.writeFileSync(logFilePath, '', 'utf-8'); // Clears the file
-    // console.log('Cleared existing log file:', logFilePath);
+if (!fs.existsSync(qrDir)) {
+    logger.error(`QR directory '${qrDir}' not found!`);
+    process.exit(1);
 }
 
 function getRandomQRCode() {
@@ -28,11 +34,16 @@ function getRandomQRCode() {
 }
 
 function logPerformance(timeTaken) {
-    const logEntry = `${new Date().toISOString()} - DecodeTime: ${timeTaken.toFixed(3)}ms\n`;
-    fs.appendFileSync(logFilePath, logEntry);
+    logger.info({
+        QRDecodeTimeMs: timeTaken
+    });
 }
 
-export async function decodeQRCode() {
+export async function decodeQRCode(clearLogs = false) {
+    if (clearLogs && fs.existsSync(logFilePath)) {
+        fs.writeFileSync(logFilePath, '', 'utf-8');
+    }
+
     try {
         const qrPath = getRandomQRCode();
         const image = await Jimp.read(qrPath);
@@ -43,21 +54,20 @@ export async function decodeQRCode() {
         const start = performance.now();
         const decodedQR = jsQR(imageData, width, height);
         const end = performance.now();
-        
+
         const timeTaken = end - start;
         logPerformance(timeTaken);
 
         if (!decodedQR) {
-            // console.error('Failed to decode QR');
+            logger.error('Failed to decode QR');
             return null;
         }
 
         const data = JSON.parse(decodedQR.data);
-        // console.log(`Decoded QR from ${qrPath} in ${timeTaken.toFixed(3)}ms`, data);
-        
+
         return { uin: data.subject.UIN, dob: data.subject.DOB };
     } catch (err) {
-        // console.error('Error decoding QR:', err);
+        logger.error(`Error decoding QR: ${err.message}`);
         return null;
     }
 }
