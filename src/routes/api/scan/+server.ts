@@ -185,11 +185,23 @@ export const POST: RequestHandler = async ({ request }) => {
         }
 
         const calculateAge = (birthDate: string | Date): number => {
-            const date: Date = birthDate instanceof Date ? birthDate : new Date(birthDate);
-            return Math.floor((new Date().getTime() - date.getTime()) / 3.15576e+10);
-        };
+            const birth = new Date(birthDate);
+            const today = new Date();
+          
+            let age = today.getFullYear() - birth.getFullYear();
+            const monthDiff = today.getMonth() - birth.getMonth();
 
-        return calculateAge(dobDB) >= 35 ? json({ isAdult: true, photo }) : json({ isAdult: false });
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+          
+            return age;
+          };
+          
+
+        const finalResponse = calculateAge(dobDB) >= 35 ? { isAdult: true, photo } : { isAdult: false };
+
+        return json(finalResponse);
 
     } catch (error: unknown) {
         logger.error({
