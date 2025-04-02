@@ -33,9 +33,10 @@ function getRandomQRCode() {
     return path.join(qrDir, randomFile);
 }
 
-function logPerformance(timeTaken) {
+function logPerformance(timeTaken, isDecodeSuccess = true) {
     logger.info({
-        QRDecodeTimeMs: timeTaken
+        QRDecodeTimeMs: timeTaken,
+        decodeStatus: isDecodeSuccess
     });
 }
 
@@ -56,16 +57,19 @@ export async function decodeQRCode(clearLogs = false) {
         const end = performance.now();
 
         const timeTaken = end - start;
-        logPerformance(timeTaken);
+        
+        let isDecodeSuccess = true;
 
         if (!decodedQR) {
-            logger.error('Failed to decode QR');
+            logPerformance(timeTaken, !isDecodeSuccess);
             return null;
         }
 
+        logPerformance(timeTaken, isDecodeSuccess);
+
         const data = JSON.parse(decodedQR.data);
 
-        return { uin: data.subject.UIN, dob: data.subject.DOB };
+        return { pcn: data.pcn, dob: data.bd };
     } catch (err) {
         logger.error(`Error decoding QR: ${err.message}`);
         return null;

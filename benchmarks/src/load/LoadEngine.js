@@ -44,7 +44,7 @@ export default class MasquerAgeLoadTest {
         let clearLogs = true;
 
         const spinner = ora('Running load test...\n').start();
-        
+
         // Worker function
         const worker = async (vu) => {
             try {
@@ -122,7 +122,7 @@ export default class MasquerAgeLoadTest {
 
         // Table for data sent/received
         const dataTable = new Table({
-            head: ['Client-side Data Metrics', 'Avg (bytes)', 'Avg Rate (bytes/s)'],
+            head: ['Client-side Data Metrics', 'Total (bytes)', 'Rate (bytes/s)'],
             colWidths: [30, 20, 20],
             style: { head: ['yellow'], border: ['grey'], compact: true }
         });
@@ -137,12 +137,12 @@ export default class MasquerAgeLoadTest {
         const stats = this.calculateStats(metrics.http_req_duration);
         durationTable.push([ 
             'http_req_duration',
-            this.colorize(stats.avg ? stats.avg.toFixed(5) : '-', 'green'),
-            this.colorize(stats.min ? stats.min.toFixed(5): '-', 'blue'),
-            this.colorize(stats.med ? stats.med.toFixed(5): '-', 'yellow'),
-            this.colorize(stats.max ? stats.max.toFixed(5) : '-', 'red'),
-            this.colorize(stats.p90 ? stats.p90.toFixed(5): '-', 'cyan'),
-            this.colorize(stats.p95 ? stats.p95.toFixed(5) : '-', 'magenta'),
+            this.colorize(stats.avg ? stats.avg.toFixed(5) : '-', 'lightGreen'),
+            this.colorize(stats.min ? stats.min.toFixed(5): '-', 'lightBlue'),
+            this.colorize(stats.med ? stats.med.toFixed(5): '-', 'lightYellow'),
+            this.colorize(stats.max ? stats.max.toFixed(5) : '-', 'lightRed'),
+            this.colorize(stats.p90 ? stats.p90.toFixed(5): '-', 'lightCyan'),
+            this.colorize(stats.p95 ? stats.p95.toFixed(5) : '-', 'lightMagenta'),
         ]);;
 
         dataTable.push([ 
@@ -170,16 +170,26 @@ export default class MasquerAgeLoadTest {
         console.log(processDecoderLogs());
     }
 
-    colorize(value, color) {
-        const colors = {
-            green: '\x1b[32m',
-            blue: '\x1b[34m',
-            yellow: '\x1b[33m',
-            red: '\x1b[31m',
-            cyan: '\x1b[36m',
-            magenta: '\x1b[35m',
-            reset: '\x1b[0m',
-        };
-        return `${colors[color] || colors.reset}${value}${colors.reset}`;
-    }
+colorize(value, color) {
+    const colors = {
+        black: '\x1b[30m',
+        red: '\x1b[31m',
+        green: '\x1b[32m',
+        yellow: '\x1b[33m',
+        blue: '\x1b[34m',
+        magenta: '\x1b[35m',
+        cyan: '\x1b[36m',
+        white: '\x1b[37m',
+        gray: '\x1b[90m',
+        lightRed: '\x1b[91m',  
+        lightGreen: '\x1b[92m',  
+        lightYellow: '\x1b[93m',  
+        lightBlue: '\x1b[94m',  
+        lightMagenta: '\x1b[95m',  
+        lightCyan: '\x1b[96m',  
+        lightWhite: '\x1b[97m',  
+        reset: '\x1b[0m'
+    };
+    return `${colors[color] || colors.reset}${value}${colors.reset}`;
+}
 }

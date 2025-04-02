@@ -21,7 +21,10 @@ export function processDecoderLogs() {
         return;
     }
 
-    const logs = fs.readFileSync(logFilePath, 'utf-8').split('\n').filter(line => line);
+    const logs = fs.readFileSync(logFilePath, 'utf-8')
+        .split('\n')
+        .filter(line => line.trim() !== '');
+
     if (logs.length === 0) {
         logger.warn('No logs to process.');
         return;
@@ -31,21 +34,31 @@ export function processDecoderLogs() {
     let count = 0;
     let fastest = Infinity;
     let slowest = 0;
+    let successCount = 0;
+    let failureCount = 0;
 
     logs.forEach(log => {
-        const match = log.match(/"QRDecodeTimeMs":(\d+\.\d+)/);
-        if (match) {
-            const time = parseFloat(match[1]);
-            totalTime += time;
-            count++;
+        const statusMatch = log.match(/"decodeStatus":(true|false)/);
+        if (statusMatch) {
+            const isSuccess = statusMatch[1] === 'true';
+            isSuccess ? successCount++ : failureCount++;
 
-            if (time < fastest) fastest = time;
-            if (time > slowest) slowest = time;
+            if (isSuccess) {
+                const timeMatch = log.match(/"QRDecodeTimeMs":(\d+\.\d+)/);
+                if (timeMatch) {
+                    const time = parseFloat(timeMatch[1]);
+                    totalTime += time;
+                    count++;
+
+                    if (time < fastest) fastest = time;
+                    if (time > slowest) slowest = time;
+                }
+            }
         }
     });
 
     if (count === 0) {
-        logger.error('No valid log entries found.');
+        logger.error('No successful QR decode log entries found.');
         return;
     }
 
@@ -53,11 +66,14 @@ export function processDecoderLogs() {
     const avgPerSec = (1000 / avgTime).toFixed(3);
 
     const table = new Table({
-        head: ['QR Decoding Process Time', 'Value'],
+        head: ['QR Decoding Metrics', 'Value'],
         colWidths: [30, 20],
     });
 
     table.push(
+        ['Total Logs Processed', logs.length],
+        ['Successful Decodes', successCount],
+        ['Failed Decodes', failureCount],
         ['Total Decoded', count],
         ['Avg Decode Time', `${avgTime.toFixed(3)} ms`],
         ['Fastest Decode Time', `${fastest.toFixed(3)} ms`],
