@@ -69,7 +69,7 @@ export async function decodeQRCode(clearLogs = false) {
 
         const data = JSON.parse(decodedQR.data);
 
-        return { pcn: data.pcn, dob: data.bd };
+        return data;
     } catch (err) {
         logger.error(`Error decoding QR: ${err.message}`);
         return null;
