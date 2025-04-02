@@ -71,7 +71,6 @@ export function processDecoderLogs() {
     });
 
     table.push(
-        ['Total Logs Processed', logs.length],
         ['Successful Decodes', successCount],
         ['Failed Decodes', failureCount],
         ['Total Decoded', count],
