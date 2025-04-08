@@ -5,6 +5,7 @@ import { decodeQRCode } from '../qr-manager/QRDecoderEngine.js';
 import pino from 'pino';
 import { processDecoderLogs } from '../qr-manager/QRDecoderLogProcessor.js';
 import { processNodeLogs } from '../node-manager/NodeLogProcessor.js';
+import { processAuthLogs } from '../mosip-auth-manager/MOSIPLogProcessor.js';
 
 export default class MasquerAgeLoadTest {
     constructor(options = {}) {
@@ -174,6 +175,7 @@ export default class MasquerAgeLoadTest {
         console.log(dataTable.toString() + '\n');
         console.log(processDecoderLogs());
         console.log(processNodeLogs());
+        console.log(processAuthLogs());
     }
 
     colorize(value, color) {
