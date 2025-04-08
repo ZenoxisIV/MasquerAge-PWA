@@ -21,11 +21,11 @@ export function processDecoderLogs() {
         return;
     }
 
-    const logs = fs.readFileSync(logFilePath, 'utf-8')
+    const rawLogs = fs.readFileSync(logFilePath, 'utf-8')
         .split('\n')
         .filter(line => line.trim() !== '');
 
-    if (logs.length === 0) {
+    if (rawLogs.length === 0) {
         logger.warn('No logs to process.');
         return;
     }
@@ -37,23 +37,27 @@ export function processDecoderLogs() {
     let successCount = 0;
     let failureCount = 0;
 
-    logs.forEach(log => {
-        const statusMatch = log.match(/"decodeStatus":(true|false)/);
-        if (statusMatch) {
-            const isSuccess = statusMatch[1] === 'true';
-            isSuccess ? successCount++ : failureCount++;
+    rawLogs.forEach(line => {
+        try {
+            const log = JSON.parse(line);
+            const isSuccess = log.decodeStatus === true;
 
             if (isSuccess) {
-                const timeMatch = log.match(/"QRDecodeTimeMs":(\d+\.\d+)/);
-                if (timeMatch) {
-                    const time = parseFloat(timeMatch[1]);
+                successCount++;
+                const time = parseFloat(log.QRDecodeTimeMs);
+
+                if (!isNaN(time)) {
                     totalTime += time;
                     count++;
-
-                    if (time < fastest) fastest = time;
-                    if (time > slowest) slowest = time;
+                    fastest = Math.min(fastest, time);
+                    slowest = Math.max(slowest, time);
                 }
+            } else {
+                failureCount++;
             }
+
+        } catch (err) {
+            logger.warn('Skipping malformed log line.');
         }
     });
 
