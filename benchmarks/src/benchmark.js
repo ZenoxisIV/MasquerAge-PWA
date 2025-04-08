@@ -1,4 +1,4 @@
-import MasquerAgeLoadTest from './load/LoadEngine.js';
+import MasquerAgeLoadTest from './core/LoadEngine.js';
 
 const options = {
     targetUrl: 'https://jsonplaceholder.typicode.com/posts',

@@ -4,6 +4,7 @@ import Table from 'cli-table3';
 import { decodeQRCode } from '../qr-manager/QRDecoderEngine.js';
 import pino from 'pino';
 import { processDecoderLogs } from '../qr-manager/QRDecoderLogProcessor.js';
+import { processNodeLogs } from '../node-manager/NodeLogProcessor.js';
 
 export default class MasquerAgeLoadTest {
     constructor(options = {}) {
@@ -115,21 +116,21 @@ export default class MasquerAgeLoadTest {
 
         // Table for request duration
         const durationTable = new Table({
-            head: ['Overall Transaction Duration', 'Avg (ms)', 'Min (ms)', 'Med (ms)', 'Max (ms)', 'p(90) (ms)', 'p(95) (ms)'],
+            head: ['Overall Transaction Duration [ms]', 'Avg', 'Min', 'Med', 'Max', 'p(90)', 'p(95)'],
             colWidths: [30, 15, 15, 15, 15, 15, 15],
             style: { head: ['cyan'], border: ['grey'], compact: true }
         });
 
         // Table for data sent/received
         const dataTable = new Table({
-            head: ['Client-side Data Metrics', 'Total (bytes)', 'Rate (bytes/s)'],
+            head: ['Client-side Data Metrics', 'Total [bytes]', 'Rate [bytes/s]'],
             colWidths: [30, 20, 20],
             style: { head: ['yellow'], border: ['grey'], compact: true }
         });
 
         // Table for HTTP requests
         const httpReqTable = new Table({
-            head: ['Client-side Requests', 'Count', 'Rate (req/s)'],
+            head: ['Client-side Requests', 'Count', 'Rate [req/s]'],
             colWidths: [30, 25, 20],
             style: { head: ['magenta'], border: ['grey'], compact: true }
         });
@@ -161,35 +162,40 @@ export default class MasquerAgeLoadTest {
             `${((metrics.http_req_failed / results.length) * 100).toFixed(2)}%   ${metrics.http_req_failed} out of ${results.length}`,
             '',
         ]);
-        httpReqTable.push(['http_reqs', `${results.length}`, `${(results.length / (this.duration / 1000)).toFixed(5)}/s`]);
+        httpReqTable.push([
+            'http_reqs', 
+            `${results.length}`, 
+            `${(results.length / (this.duration / 1000)).toFixed(5)}/s`
+        ]);
 
         console.log(`\n=== Load Test Results for ${this.targetUrl} (${this.method}) ===`);
         console.log(durationTable.toString() + '\n');
         console.log(httpReqTable.toString() + '\n');
         console.log(dataTable.toString() + '\n');
         console.log(processDecoderLogs());
+        console.log(processNodeLogs());
     }
 
-colorize(value, color) {
-    const colors = {
-        black: '\x1b[30m',
-        red: '\x1b[31m',
-        green: '\x1b[32m',
-        yellow: '\x1b[33m',
-        blue: '\x1b[34m',
-        magenta: '\x1b[35m',
-        cyan: '\x1b[36m',
-        white: '\x1b[37m',
-        gray: '\x1b[90m',
-        lightRed: '\x1b[91m',  
-        lightGreen: '\x1b[92m',  
-        lightYellow: '\x1b[93m',  
-        lightBlue: '\x1b[94m',  
-        lightMagenta: '\x1b[95m',  
-        lightCyan: '\x1b[96m',  
-        lightWhite: '\x1b[97m',  
-        reset: '\x1b[0m'
-    };
-    return `${colors[color] || colors.reset}${value}${colors.reset}`;
-}
+    colorize(value, color) {
+        const colors = {
+            black: '\x1b[30m',
+            red: '\x1b[31m',
+            green: '\x1b[32m',
+            yellow: '\x1b[33m',
+            blue: '\x1b[34m',
+            magenta: '\x1b[35m',
+            cyan: '\x1b[36m',
+            white: '\x1b[37m',
+            gray: '\x1b[90m',
+            lightRed: '\x1b[91m',  
+            lightGreen: '\x1b[92m',  
+            lightYellow: '\x1b[93m',  
+            lightBlue: '\x1b[94m',  
+            lightMagenta: '\x1b[95m',  
+            lightCyan: '\x1b[96m',  
+            lightWhite: '\x1b[97m',  
+            reset: '\x1b[0m'
+        };
+        return `${colors[color] || colors.reset}${value}${colors.reset}`;
+    }
 }
