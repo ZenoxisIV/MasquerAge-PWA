@@ -166,6 +166,11 @@ export const POST: RequestHandler = async ({ request }) => {
             }
 
             result = await response.json();
+
+            logger.info({
+                internalCode: "[FastAPI-FIN]",
+                msg: "Got response from FastAPI..."
+            });
         } catch (error: unknown) {
             logger.error({
                 internalCode: "[FastAPI-RTO]",
