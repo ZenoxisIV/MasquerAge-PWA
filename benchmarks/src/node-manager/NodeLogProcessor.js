@@ -32,8 +32,8 @@ export function processNodeLogs() {
 
     let fastapiRequests = 0;
     let fastapiTimeouts = 0;
-    let fastapiAuthFails = 0;
-    let fastapiSuccess = 0;
+    let authFails = 0;
+    let authSuccess = 0;
     let dbQueries = 0;
     let dbFailures = 0;
     let invalidPCNs = 0;
@@ -67,6 +67,7 @@ export function processNodeLogs() {
                     const duration = time - start;
                     fastapiRespSum += duration;
                     fastapiRespCount++;
+                    authSuccess++;
                     fastapiInitMap.delete(pid);
                 }
                 break;
@@ -74,7 +75,7 @@ export function processNodeLogs() {
                 fastapiTimeouts++;
                 break;
             case '[FastAPI-AuthFail]':
-                fastapiAuthFails++;
+                authFails++;
                 break;
             case '[FastAPI-SFail]':
                 fastapiTimeouts++;
@@ -99,14 +100,10 @@ export function processNodeLogs() {
                 invalidPCNs++;
                 break;
         }
-
-        if (log.msg && log.msg.includes('isAdult')) {
-            fastapiSuccess++;
-        }
     });
 
-    const avgFastapiTime = fastapiRespCount > 0 ? (fastapiRespSum / fastapiRespCount).toFixed(2) : 'N/A';
-    const avgNeonTime = neonRespCount > 0 ? (neonRespSum / neonRespCount).toFixed(2) : 'N/A';
+    const avgFastapiTime = fastapiRespCount > 0 ? (fastapiRespSum / fastapiRespCount).toFixed(2) : '-';
+    const avgNeonTime = neonRespCount > 0 ? (neonRespSum / neonRespCount).toFixed(2) : '-';
 
     const table = new Table({
         head: ['Node Server Metrics', 'Value'],
@@ -116,8 +113,8 @@ export function processNodeLogs() {
     table.push(
         ['FastAPI Requests', fastapiRequests],
         ['FastAPI Timeouts', fastapiTimeouts],
-        ['Auth Failures (FastAPI)', fastapiAuthFails],
-        ['Auth Success (isAdult calls)', fastapiSuccess],
+        ['MOSIP Auth Failures', authFails],
+        ['MOSIP Auth Success', authSuccess],
         ['DB Queries (Neon)', dbQueries],
         ['DB Failures', dbFailures],
         ['Invalid PCNs', invalidPCNs],
