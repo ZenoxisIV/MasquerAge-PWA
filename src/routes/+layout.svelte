@@ -1,12 +1,40 @@
 <script lang="ts">
+	import { onMount } from 'svelte'
+  	import { pwaInfo } from 'virtual:pwa-info'
 	import logo from '$lib/images/MasquerAge.png';
 	import { DarkMode, Footer, FooterCopyright, FooterLink, FooterLinkGroup, FooterBrand, FooterIcon } from 'flowbite-svelte';
 	import { GithubSolid } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import '../app.css';
+
+	onMount(async () => {
+		if (pwaInfo) {
+			const { registerSW } = await import('virtual:pwa-register')
+			registerSW({
+				immediate: true,
+				onRegistered(r) {
+				// uncomment following code if you want check for updates
+				// r && setInterval(() => {
+				//    console.log('Checking for sw update')
+				//    r.update()
+				// }, 20000 /* 20s for testing purposes */)
+				console.log(`SW Registered: ${r}`)
+				},
+				onRegisterError(error) {
+				console.log('SW registration error', error)
+				}
+			})
+		}
+	})
+
+  	const webManifest = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
 	
 	let { children } = $props();
 </script>
+
+<svelte:head>
+    {@html webManifest}
+</svelte:head>
 
 <div class="flex flex-col min-h-screen">
 	<div>
