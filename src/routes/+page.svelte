@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { Button, ButtonGroup, Card, Label, Input, Modal } from 'flowbite-svelte';
-	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid, QrCodeOutline, ProfileCardOutline } from 'flowbite-svelte-icons';
+	import { Button, Modal } from 'flowbite-svelte';
+	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
 	import QRScanner from './QRScanner.svelte';
-
-	let currentView: "form" | "qr" = "qr";
 
 	let verifiedPrompt = false, rejectedPrompt = false, invalidPrompt = false;
 	let modalOpen = false;
@@ -66,25 +64,6 @@
 </svelte:head>
 
 <section>
-	<div class="flex justify-center mb-4">
-		<ButtonGroup class="*:ring-primary-700! pt-5 pb-5 flex w-full max-w-md">
-			<Button 
-				class="flex-1 px-6 py-3 text-sm sm:text-md"
-				on:click={() => currentView = "qr"}
-			>
-				<QrCodeOutline class="w-5 h-5 sm:w-6 sm:h-6 me-2" />
-				Scan QR Code
-			</Button>
-			<Button 
-				class="flex-1 px-6 py-3 text-sm sm:text-md"
-				on:click={() => currentView = "form"}
-			>
-				<ProfileCardOutline class="w-5 h-5 sm:w-6 sm:h-6 me-2" />
-				Enter MOSIP ID
-			</Button>
-		</ButtonGroup>
-	</div>
-	
 	<Modal bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
 			{#if verifiedPrompt}
@@ -122,30 +101,7 @@
 		</div>
 	</Modal>
 
-	{#if currentView === "qr"}
-		<section class="flex flex-col justify-center items-center flex-[0.6] pb-15">
-			<QRScanner bind:result={qrResult} />
-		</section>
-	{:else}
-		<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
-			<form class="flex flex-col space-y-6" on:submit|preventDefault={validateID}>
-				<h3 class="text-xl font-medium text-gray-900 dark:text-white text-center">MOSIP Anonymous Age Verification</h3>
-				<Label class="space-y-2">
-					<div class="mb-2"><span>PCN:</span></div>
-					<Input type="text" name="pcn" bind:value={pcn} placeholder="Enter your PCN" required />
-				</Label>
-				<Label class="space-y-2">
-					<div class="mb-2"><span>Date of Birth:</span></div>
-					<Input type="date" name="dateOfBirth" bind:value={dateOfBirth} placeholder="YYYY-MM-DD" required />
-				</Label>
-				<Button type="submit" class="w-full">Validate MOSIP ID</Button>
-			</form>
-		</Card>
-
-		<Card class="mx-auto mt-6 mb-6" size="sm" border={false}>
-			<div class="text-normal text-center font-medium text-gray-500 dark:text-gray-300">
-				New to MasquerAge? <a href="/generate-id" class="text-primary-700 hover:underline dark:text-primary-500"> Create a MOSIP ID </a>
-			</div>
-		</Card>
-	{/if}
+	<section class="flex flex-col justify-center items-center flex-[0.6] pt-15 pb-15">
+		<QRScanner bind:result={qrResult} />
+	</section>
 </section>

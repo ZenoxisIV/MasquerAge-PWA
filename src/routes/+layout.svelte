@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte'
   	import { pwaInfo } from 'virtual:pwa-info'
-	import logo from '$lib/images/MasquerAge.png';
-	import { DarkMode, Footer, FooterCopyright, FooterLink, FooterLinkGroup, FooterBrand, FooterIcon } from 'flowbite-svelte';
-	import { GithubSolid } from 'flowbite-svelte-icons';
 	import { page } from '$app/state';
 	import '../app.css';
+	import Navbar from './Navbar.svelte';
+	import Sidebar from './Sidebar.svelte';
+	import Footer from './Footer.svelte';
 
 	onMount(async () => {
 		if (pwaInfo) {
@@ -28,7 +28,8 @@
 	})
 
   	const webManifest = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
-	
+
+	let drawerHidden = $derived(false);
 	let { children } = $props();
 </script>
 
@@ -36,42 +37,25 @@
     {@html webManifest}
 </svelte:head>
 
-<div class="flex flex-col min-h-screen">
-	<div>
-		<DarkMode />
+{#if !page.error}
+	<header class="fixed top-0 z-40 mx-auto w-full flex-none border-b border-gray-200 bg-white dark:border-gray-600 dark:bg-gray-800">
+		<Navbar bind:drawerHidden />
+	</header>
+
+	<div class="overflow-hidden lg:flex">
+		
+			<Sidebar bind:drawerHidden />
+
+		<div class="relative h-full w-full overflow-y-auto lg:ml-64 pt-[70px]">
+			<main class="p-4">
+				{@render children()}
+			</main>
+			
+			<Footer />
+		</div>
 	</div>
-	
-	<main class="flex-1 flex flex-col p-4 w-full max-w-4xl mx-auto box-border">
+{:else}
+	<main class="p-4">
 		{@render children()}
 	</main>
-	
-	{#if !page.error}
-		<Footer footerType="logo">
-			<div class="sm:flex sm:items-center sm:justify-between">
-				<div class="sm:pb-0 pb-5">
-					<FooterBrand href="/" src={logo} alt="MasquerAge Logo" name="MasquerAge" />
-				</div>
-				<FooterLinkGroup ulClass="flex flex-wrap items-center ml-2 mb-6 text-sm text-gray-500 sm:mb-0 dark:text-gray-400">
-					<FooterLink href="/">Home</FooterLink>
-					<FooterLink href="/generate-id">Create</FooterLink>
-					<FooterLink href="/view-id">View</FooterLink>
-					<FooterIcon href="https://github.com/ZenoxisIV/CS-199-MasquerAge" target="_blank">
-						<GithubSolid class="w-6 h-6 mr-4 text-gray-500 dark:text-gray-500 hover:text-gray-900 dark:hover:text-white" />
-					</FooterIcon>
-				</FooterLinkGroup>
-			</div>
-			<hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-				<div class="flex-1 text-center">
-					<FooterCopyright
-					spanClass="text-sm dark:text-gray-400 sm:text-center"
-					href="https://dcs.upd.edu.ph/"
-					target="_blank"
-					by="Department of Computer Science. UP Diliman."
-					/>
-					<p class="text-sm dark:text-gray-400 sm:text-center">
-						This project is part of the CS 198/199 Undergraduate Program.
-					</p>
-				</div>
-		</Footer>
-	{/if}
-</div>
+{/if}
