@@ -22,3 +22,13 @@ export const userDemographicsTable = t.pgTable('user_demographics', {
     dateOfBirth: t.date().notNull(),
     placeOfBirth: t.varchar("placeOfBirth", { length: 256 }).notNull()
 });
+
+export const authSessionsTable = t.pgTable('auth_sessions', {
+    id: t.varchar("id", { length: 36 }).primaryKey(),
+    userId: t.varchar("user_id", { length: 36 }).notNull(),
+    isValid: t.boolean("is_valid").notNull(),
+    expiresAt: t.timestamp("expires_at", {
+        withTimezone: true,
+        mode: "date"
+    }).notNull()
+});
