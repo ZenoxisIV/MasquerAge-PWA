@@ -69,7 +69,6 @@
 
         if (qr) {
             onScan(qr.data);
-            console.log(qr.data);
             stopMedia()
             return;
         }

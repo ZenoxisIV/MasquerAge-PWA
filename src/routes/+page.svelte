@@ -61,7 +61,7 @@
 </svelte:head>
 
 <section>
-	<Modal bind:open={modalOpen} size="xs" autoclose outsideclose>
+	<Modal onclose={() => modalOpen = false} bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
 			{#if verifiedPrompt}
 				<div class="flex flex-col items-center">
@@ -94,8 +94,8 @@
 			<p class="mt-1 mb-5 text-lg font-normal text-black dark:text-gray-400">
 				Closing in {timer} second(s)
 			</p>
+			<Button onclick={() => modalOpen = false}>Close</Button>
 		</div>
-		<Button onclick={() => modalOpen = false}></Button>
 	</Modal>
 	<section class="flex flex-col justify-center items-center flex-[0.6] pt-15 pb-15">
 		<QRScanner onScan={validateID} active={!modalOpen}/>
