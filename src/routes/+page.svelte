@@ -3,14 +3,14 @@
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
 	import QRScanner from './QRScanner.svelte';
 
-	let verifiedPrompt = false, rejectedPrompt = false, invalidPrompt = false;
-	let modalOpen = false;
-	let pcn = "", dateOfBirth: string
-	let result: { isAdult?: boolean; photo?: string } = {};
+	let verifiedPrompt = $state(false);
+	let rejectedPrompt = $state(false);
+	let invalidPrompt = $state(false);
 
-	let qrResult: string | null = null;
+	let modalOpen = $state(false);
+	let result: { isAdult?: boolean; photo?: string } = $state({});
 
-	let timer: number;
+	let timer: number = $state(0);
 
 	function startCountdown(duration: number, callback: () => void): void {
 		const intervalId = setInterval(() => {
@@ -23,38 +23,35 @@
 		}, 1000);
 	}
 
-	async function validateID(): Promise<void> {
+	async function validateID(data: string): Promise<void> {
 		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
 		modalOpen = false;
-
-		if (!pcn.trim() || !dateOfBirth) return;
-
-		dateOfBirth = new Date(dateOfBirth).toISOString().split('T')[0]; // YYYY-MM-DD format
+		result = {};
 
 		try {
-			const response = await fetch(`/api/encode?pcn=${encodeURIComponent(pcn)}&dob=${encodeURIComponent(dateOfBirth)}`);
-			const res = await response.json();
+			const response = await fetch('/api/scan', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ data })
+			});
 
 			if (response.ok) {
-				result = res;
+				result = await response.json();
 				result.isAdult ? (verifiedPrompt = true) : (rejectedPrompt = true);
 			} else {
 				invalidPrompt = true;
 			}
-
-			modalOpen = true;
 		} catch (error) {
 			console.error(error);
 			invalidPrompt = true;
-			modalOpen = true;
 		}
-
-		if (modalOpen) {
-			timer = 5;
-			startCountdown(timer, () => {
-				modalOpen = false;
-			});
-		}
+		
+		modalOpen = true;
+		timer = 5;
+		startCountdown(timer, () => {
+			modalOpen = false;
+			result = {};
+		});
 	}
 </script>
 
@@ -64,7 +61,7 @@
 </svelte:head>
 
 <section>
-	<Modal bind:open={modalOpen} size="xs" autoclose outsideclose>
+	<Modal onclose={() => modalOpen = false} bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
 			{#if verifiedPrompt}
 				<div class="flex flex-col items-center">
@@ -97,11 +94,10 @@
 			<p class="mt-1 mb-5 text-lg font-normal text-black dark:text-gray-400">
 				Closing in {timer} second(s)
 			</p>
-			<Button>Close</Button>
+			<Button onclick={() => modalOpen = false}>Close</Button>
 		</div>
 	</Modal>
-
 	<section class="flex flex-col justify-center items-center flex-[0.6] pt-15 pb-15">
-		<QRScanner bind:result={qrResult} />
+		<QRScanner onScan={validateID} active={!modalOpen}/>
 	</section>
 </section>
