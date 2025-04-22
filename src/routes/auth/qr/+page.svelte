@@ -1,13 +1,13 @@
 <script lang='ts'>
     import type { PageProps } from "./$types";
     import { source } from 'sveltekit-sse';
+    import QRCode from "./QRCode.svelte";
 
     let { data }: PageProps = $props();
 
     let sessionId = $derived(data.sessionId);
     let src = $derived(source(`/api/scan/${sessionId}`));
-    let status = $derived(src.select('message'));
-    let result = $derived(src.select('result'));
+    let result = $derived(src.select('message'));
 
     const pcn = '1128-4572-2969-9457';
     const dob = '1985/04/29';
@@ -24,11 +24,12 @@
     }
 </script>
 
-<div>{$status}</div>
-<div>{sessionId}</div>
+<QRCode text={sessionId} />
 <button onclick={() => handleClick('PUT')}>post</button>
 <button onclick={() => handleClick('PATCH')}>patch</button>
-{#if $status === 'authComplete'}
+{#if $result}
 {@const { isLegalAge } = JSON.parse($result)}
 <div>{isLegalAge}</div>
+{:else}
+<div>banana</div>
 {/if}

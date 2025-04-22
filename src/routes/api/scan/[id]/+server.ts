@@ -28,13 +28,14 @@ const logger: pino.Logger = pino({
  */
 type Emitter = (event: string, message: string) => void;
 
+// move this to db for statelessness and use event forwarders?
 const clients = new Map<string,Emitter>();
 
 export const POST: RequestHandler = async ({ request, params }) => {
     const browserSessionID = params.id!;
     return produce(
         function start({ emit }) {
-            emit('message', 'authStart');
+            // emit('message', 'authStart');
             clients.set(browserSessionID, emit);
         },
         {
@@ -45,7 +46,7 @@ export const POST: RequestHandler = async ({ request, params }) => {
     );
 };
 
-// must protect this route!
+// protect these routes
 export const PUT: RequestHandler = async ({ request, params }) => {
     const { userId } = await request.json();
     const authSessionId = params.id!;
@@ -57,17 +58,12 @@ export const PUT: RequestHandler = async ({ request, params }) => {
         //     expiresAt: new Date(Date.now() + 1000 * 60 * 10) // 10 mins
         // });
 
-        const emitter = clients.get(authSessionId);
-        if (!emitter)
-            return json({ error: "Invalid session" }, { status: 400 });
-
-        emitter('message', 'authConfirm');
-
     } catch (error) { // neon db fail
+        console.log(error)
         return json({ error: "Invalid session" }, { status: 400 });
     }
 
-    return json({ status: 200 });
+    return new Response();
 }
 
 export const PATCH: RequestHandler = async ({ request, params }) => {
@@ -83,14 +79,14 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
 
     let authResult: { authStatus: boolean, responseTime: string, errorMessages: string};
     try {
-        const response = await fetch(`${FASTAPI_URL}/dob/`, {
+        const response = await fetch(`${FASTAPI_URL}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({uin, dob: dob.replace(/-/g, "/")})
         });
 
-        if (!response.ok) // fastapi fail
-            return json({ error: "Invalid session" }, { status: 400 });
+        if (!response.ok)
+            throw new Error('FastAPI server error');
 
         authResult = await response.json();
     } catch (error) {
@@ -109,10 +105,9 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
     if (!emitter)
         return json({ error: "Invalid session "}, { status: 400 });
 
-    emitter('message', 'authComplete');
-    emitter('result', JSON.stringify({ isLegalAge })); // include photo?
+    emitter('message', JSON.stringify({ isLegalAge })); // include photo?
 
-    return new Response();
+    return json({ status: 200 });
 }
 
 async function invalidateSession (authSessionId: string) {
