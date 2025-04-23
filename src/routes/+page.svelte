@@ -1,73 +1,77 @@
-<script lang="ts">
+<script lang='ts'>
 	import { Button, Modal } from 'flowbite-svelte';
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
-	import QRScanner from './QRScanner.svelte';
+    import { source } from 'sveltekit-sse';
+    import QRCode from "$lib/qr-components/QRCode.svelte";
+	import { invalidate } from "$app/navigation";
 
-	let verifiedPrompt = $state(false);
-	let rejectedPrompt = $state(false);
-	let invalidPrompt = $state(false);
+    let { data } = $props();
+    
+    let sessionId = $derived(data.sessionId);
+    let src = $derived(source(`/api/scan/${sessionId}`));
+    let result = $derived(src.select('message'));
 
-	let modalOpen = $state(false);
-	let result: { isAdult?: boolean; photo?: string } = $state({});
+	let isValidSession = $state(true);
+    let isAdult = $state(false);
 
-	let timer: number = $state(0);
+    let modalOpen = $state(false);
 
-	function startCountdown(duration: number, callback: () => void): void {
-		const intervalId = setInterval(() => {
-			timer--;
-			duration--;
-			if (duration < 0) {
-				clearInterval(intervalId);
-				callback();
-			}
-		}, 1000);
-	}
+    $effect(() => {
+        try {
+            const res = JSON.parse($result);
+            if (res.error) {
+                isValidSession = false;
+            } else {
+                ({ isAdult } = res);
+            }
+            modalOpen = true;
+            countdown.start(5, () => {
+                if (modalOpen) modalOpen = false
+            });
+        } catch(error) {
 
-	async function validateID(data: string): Promise<void> {
-		verifiedPrompt = rejectedPrompt = invalidPrompt = false;
-		modalOpen = false;
-		result = {};
+        }
+        console.log($result);
+    })
 
-		try {
-			const response = await fetch('/api/scan', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ data })
-			});
+    let timer = $state(0);
+    const countdown = {
+        value: 0,
+        start: function(duration: number, callback: () => void) {
+            timer = duration;
+            this.value = duration;
+            const interval = setInterval(() => {
+                this.value--;
+                timer = this.value;
+                if (this.value === 0) {
+                    clearInterval(interval);
+                    callback();
+                }
+            }, 1000);
+        }
+    }
 
-			if (response.ok) {
-				result = await response.json();
-				result.isAdult ? (verifiedPrompt = true) : (rejectedPrompt = true);
-			} else {
-				invalidPrompt = true;
-			}
-		} catch (error) {
-			console.error(error);
-			invalidPrompt = true;
-		}
-		
-		modalOpen = true;
-		timer = 5;
-		startCountdown(timer, () => {
-			modalOpen = false;
-			result = {};
-		});
-	}
+    const handleModalClose = async () => {
+        src.close();
+        invalidate('/');
+        isValidSession = true;
+    }
 </script>
 
-<svelte:head>
-	<title>MasquerAge | Home</title>
-	<meta name="description" content="MOSIP Anonymous Age Verification" />
-</svelte:head>
-
-<section>
-	<Modal onclose={() => modalOpen = false} bind:open={modalOpen} size="xs" autoclose outsideclose>
+<div>
+	<Modal onclose={() => handleModalClose} bind:open={modalOpen} size="xs" autoclose outsideclose>
 		<div class="text-center">
-			{#if verifiedPrompt}
+			{#if !isValidSession}
+                <ExclamationCircleSolid class="mx-auto mb-4 text-yellow-400 w-36 h-36 dark:text-yellow-400" />
+                <h3 class="text-xl font-normal text-black dark:text-gray-400">
+                    Invalid ID. Please try again.
+                </h3>
+                
+            {:else if isAdult}
 				<div class="flex flex-col items-center">
 					<div class="relative">
-						{#if result.photo}
-							<img src="{`data:image/png;base64,${result.photo}`}" alt="Profile" class="w-60 h-60 rounded-lg border-4 border-green-600 dark:border-green-400" />
+						{#if $result.photo}
+							<img src="{`data:image/png;base64,${$result.photo}`}" alt="Profile" class="w-60 h-60 rounded-lg border-4 border-green-600 dark:border-green-400" />
 						{:else}
 							<div class="w-24 h-24 rounded-lg border-4 border-gray-300 dark:border-gray-500 flex items-center justify-center text-gray-500 text-sm">
 								No Image
@@ -80,15 +84,10 @@
 					</div>
 				</div>
 
-			{:else if rejectedPrompt}
+            {:else}
 				<CloseCircleSolid class="mx-auto mb-4 text-red-600 w-36 h-36 dark:text-red-400" />
 				<h3 class="text-xl font-normal text-black dark:text-gray-400">
 					This person is below 35.
-				</h3>
-			{:else if invalidPrompt}
-				<ExclamationCircleSolid class="mx-auto mb-4 text-yellow-400 w-36 h-36 dark:text-yellow-400" />
-				<h3 class="text-xl font-normal text-black dark:text-gray-400">
-					Invalid ID. Please try again.
 				</h3>
 			{/if}
 			<p class="mt-1 mb-5 text-lg font-normal text-black dark:text-gray-400">
@@ -97,7 +96,5 @@
 			<Button onclick={() => modalOpen = false}>Close</Button>
 		</div>
 	</Modal>
-	<section class="flex flex-col justify-center items-center flex-[0.6] pt-15 pb-15">
-		<QRScanner onScan={validateID} active={!modalOpen}/>
-	</section>
-</section>
+    <QRCode text={sessionId} />
+</div>

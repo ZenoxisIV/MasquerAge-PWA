@@ -1,9 +1,9 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { json, type RequestHandler } from "@sveltejs/kit";
-import { eq } from "drizzle-orm";
+import { eq, param } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
-import { usersTable, authSessionsTable } from "$lib/server/db/schema";
+import { usersTable, ageSessionsTable } from "$lib/server/db/schema";
 import pino from "pino";
 import { produce } from 'sveltekit-sse';
 import { FASTAPI_URL } from '$env/static/private';
@@ -35,8 +35,8 @@ export const POST: RequestHandler = async ({ request, params }) => {
     const browserSessionID = params.id!;
     return produce(
         function start({ emit }) {
-            // emit('message', 'authStart');
             clients.set(browserSessionID, emit);
+            emit('message', '');
         },
         {
             stop() {
@@ -50,16 +50,22 @@ export const POST: RequestHandler = async ({ request, params }) => {
 export const PUT: RequestHandler = async ({ request, params }) => {
     const { userId } = await request.json();
     const authSessionId = params.id!;
+
+    const emitter = clients.get(authSessionId);
+    if (!emitter)
+        return json({ error: "Invalid session "}, { status: 400 });
+
     try {
-        // await db.insert(authSessionsTable).values({
-        //     id: authSessionId,
-        //     userId,
-        //     isValid: true,
-        //     expiresAt: new Date(Date.now() + 1000 * 60 * 10) // 10 mins
-        // });
+        await db.insert(ageSessionsTable).values({
+            id: authSessionId,
+            userId,
+            isValid: true,
+            expiresAt: new Date(Date.now() + 1000 * 60 * 10) // 10 mins
+        });
 
     } catch (error) { // neon db fail
         console.log(error)
+        emitter('message', JSON.stringify({ error: "Invalid ID" }));
         return json({ error: "Invalid session" }, { status: 400 });
     }
 
@@ -68,14 +74,21 @@ export const PUT: RequestHandler = async ({ request, params }) => {
 
 export const PATCH: RequestHandler = async ({ request, params }) => {
     const authSessionId = params.id!;
-    // const isValid = await invalidateSession(authSessionId);
-    // if (!isValid)
-    //     return json({ error: "Invalid session" }, { status: 400 });
+
+    const emitter = clients.get(authSessionId);
+    if (!emitter)
+        return json({ error: "Invalid session "}, { status: 400 });
+
+    const isValid = await invalidateSession(authSessionId);
+    if (!isValid)
+        return json({ error: "Invalid session" }, { status: 400 });
 
     const { pcn, dob } = await request.json(); // photo?
     const uin = await getUIN(pcn);
-    if (!uin)
+    if (!uin) {
+        emitter('message', JSON.stringify({ error: "Invalid ID" }));
         return json({ error: "Invalid session" }, { status: 400 });
+    }
 
     let authResult: { authStatus: boolean, responseTime: string, errorMessages: string};
     try {
@@ -91,34 +104,37 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
         authResult = await response.json();
     } catch (error) {
         console.log(error);
+        emitter('message', JSON.stringify({ error: "Invalid ID" }));
         return json({ error: "Invalid session" }, { status: 400 });
     }
 
     const { authStatus } = authResult;
-    if (!authStatus) // mosip fail
+    if (!authStatus) {// mosip fail
+        emitter('message', JSON.stringify({ error: "Invalid ID" }));
         return json({ error: "Invalid session "}, { status: 400 });
+    }
 
     const datedob = new Date(dob);
-    const isLegalAge = datedob.setFullYear(datedob.getFullYear() + 35) < Date.now();
+    const isAdult = datedob.setFullYear(datedob.getFullYear() + 35) < Date.now();
 
-    const emitter = clients.get(authSessionId);
-    if (!emitter)
-        return json({ error: "Invalid session "}, { status: 400 });
+    const body = { isAdult } // include photo?
+    emitter('message', JSON.stringify(body));
 
-    emitter('message', JSON.stringify({ isLegalAge })); // include photo?
+    db.delete(ageSessionsTable)
+        .where(eq(ageSessionsTable.id, authSessionId));
 
-    return json({ status: 200 });
+    return json(body, { status: 200 });
 }
 
 async function invalidateSession (authSessionId: string) {
     try {
         const queryResult = await db
             .select({
-                userId: authSessionsTable.userId,
-                isValid: authSessionsTable.isValid,
-                expiresAt: authSessionsTable.expiresAt})
-            .from(authSessionsTable)
-            .where(eq(authSessionsTable.id, authSessionId));
+                userId: ageSessionsTable.userId,
+                isValid: ageSessionsTable.isValid,
+                expiresAt: ageSessionsTable.expiresAt})
+            .from(ageSessionsTable)
+            .where(eq(ageSessionsTable.id, authSessionId));
 
         if (queryResult.length !== 1)
             throw new Error('Invalid DB query');
@@ -127,9 +143,9 @@ async function invalidateSession (authSessionId: string) {
         if (!isValid || Date.now() > expiresAt.valueOf()) // also need to check if userid matches id in request?
             throw new Error('Session expired');
 
-        await db.update(authSessionsTable)
+        await db.update(ageSessionsTable)
             .set({ isValid: false })
-            .where(eq(authSessionsTable.id, authSessionId));
+            .where(eq(ageSessionsTable.id, authSessionId));
 
     } catch (error) {
         console.log(error);
