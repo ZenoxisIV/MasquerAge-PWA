@@ -24,7 +24,7 @@ const logger: pino.Logger = pino({
 });
 
 /**
- * ReadableStream controller, takes two arguments: event and data, and facilitates wrting messages into the stream.
+ * ReadableStream controller, takes two arguments: event and data, and facilitates writing messages into the stream.
  */
 type Emitter = (event: string, message: string) => void;
 

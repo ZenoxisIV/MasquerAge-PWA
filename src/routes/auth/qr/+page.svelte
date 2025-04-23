@@ -17,7 +17,7 @@
 	async function handleScan(result: string) {
 		const sessionId = result;
 		try {
-			const response = await fetch(`api/scan/${sessionId}`, {
+			const response = await fetch(`/api/scan/${sessionId}`, {
 				method: 'PUT',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ userId })
