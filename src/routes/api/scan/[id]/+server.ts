@@ -93,7 +93,7 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
 
     let authResult: { authStatus: boolean, responseTime: string, errorMessages: string};
     try {
-        const response = await fetch(`${FASTAPI_URL}`, {
+        const response = await fetch(`${FASTAPI_URL}/dob/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({uin, dob: dob.replace(/-/g, "/")})
