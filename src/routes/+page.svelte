@@ -53,7 +53,7 @@
 
     const handleModalClose = async () => {
         src.close();
-        invalidate('/');
+        invalidate('state:sessionId');
         isValidSession = true;
     }
 </script>
