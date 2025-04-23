@@ -1,5 +1,5 @@
 <script lang='ts'>
-	import { Button, Modal, Spinner } from 'flowbite-svelte';
+	import { Button, Card, Modal, Spinner } from 'flowbite-svelte';
 	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid } from 'flowbite-svelte-icons';
     import { source } from 'sveltekit-sse';
     import QRCode from "$lib/qr-components/QRCode.svelte";
@@ -95,13 +95,15 @@
         <Button onclick={() => modalOpen = false}>Close</Button>
     </div>
 </Modal>
-<div class="relative max-w-min max-h-min text-center">
-    <div class={`transition-(filter) duration-200 ${$result === 'confirm' ? 'blur-xs' : ''}`}>
-        <QRCode text={sessionId} />
-    </div>
-    {#if $result === 'confirm'}
-    <div class="absolute top-1/2 left-1/2 -translate-1/2">
-        <Spinner color="blue" size="10"/>
-    </div>
-    {/if}
+<div class="py-12 flex justify-center">
+    <Card horizontal class="relative flex justify-center">
+        <div class={`transition-(filter) duration-200 ${$result === 'confirm' ? 'blur-xs' : ''}`}>
+            <QRCode text={sessionId} />
+        </div>
+        {#if $result === 'confirm'}
+        <div class="absolute top-1/2 left-1/2 -translate-1/2">
+            <Spinner color="blue" size="10"/>
+        </div>
+        {/if}
+    </Card>
 </div>
