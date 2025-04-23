@@ -21,7 +21,7 @@
 	});
 
 	let tabs = [
-		{ name: 'QR Scanner', icon: QrCodeOutline, href: '/' },
+		{ name: 'QR Scanner', icon: QrCodeOutline, href: '/auth/qr' },
 		{ name: 'Profile Settings', icon: CogOutline, href: '/settings' },
 	];
 

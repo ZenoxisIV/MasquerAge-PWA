@@ -18,3 +18,11 @@
 }
 
 @source "../node_modules/flowbite-svelte/dist";
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}

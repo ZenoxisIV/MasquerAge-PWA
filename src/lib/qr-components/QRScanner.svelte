@@ -90,7 +90,7 @@
 		<video 
 			bind:this={video} 
             oncanplay={handleCanPlay}
-			class="absolute top-0 left-0 w-full h-full rounded-[10%] object-cover outline-none transform scale-x-[-1]"
+			class="absolute top-0 left-0 w-full h-full rounded-[10%] object-cover outline-none"
 		></video>
 		<QRBorder />
 	</div>

@@ -42,12 +42,12 @@
 		<Navbar bind:drawerHidden />
 	</header>
 
-	<div class="overflow-hidden lg:flex">
+	<div class="overflow-hidden lg:flex h-full w-full">
 		
 			<Sidebar bind:drawerHidden />
 
-		<div class="relative h-full w-full overflow-y-auto lg:ml-64 pt-[70px]">
-			<main class="p-4">
+		<div class="relative flex flex-col h-full w-full overflow-y-auto lg:ml-64 pt-[60px]">
+			<main class="grow shrink-0 p-4">
 				{@render children()}
 			</main>
 			
