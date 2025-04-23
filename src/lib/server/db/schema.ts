@@ -23,7 +23,7 @@ export const userDemographicsTable = t.pgTable('user_demographics', {
     placeOfBirth: t.varchar("placeOfBirth", { length: 256 }).notNull()
 });
 
-export const authSessionsTable = t.pgTable('auth_sessions', {
+export const ageSessionsTable = t.pgTable('age_sessions', {
     id: t.varchar("id", { length: 36 }).primaryKey(),
     userId: t.varchar("user_id", { length: 36 }).notNull(),
     isValid: t.boolean("is_valid").notNull(),
