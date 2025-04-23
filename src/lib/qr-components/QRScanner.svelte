@@ -17,8 +17,13 @@
 
 	onMount(() => {
         canvas = document.createElement('canvas');
+        video.load();
         video.setAttribute('playsinline', 'true'); // tell iOS we don't want fullscreen
         startMedia();
+
+        return () => {
+            stopMedia();    
+        }
     });
 
     $effect(() => {
@@ -55,6 +60,8 @@
     }
 
     const draw = () => {
+        if (!canvas || !video) return;
+
         const ctx = canvas.getContext('2d', {
             alpha: false,
             willReadFrequently: true,
