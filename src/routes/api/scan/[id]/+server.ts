@@ -69,6 +69,7 @@ export const PUT: RequestHandler = async ({ request, params }) => {
         return json({ error: "Invalid session" }, { status: 400 });
     }
 
+    emitter('message', 'confirm');
     return new Response();
 }
 
