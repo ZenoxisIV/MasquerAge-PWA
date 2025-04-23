@@ -1,7 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { json, type RequestHandler } from "@sveltejs/kit";
-import { eq, param } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
 import { usersTable, ageSessionsTable } from "$lib/server/db/schema";
 import pino from "pino";
