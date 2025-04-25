@@ -2,7 +2,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { Sidebar, SidebarGroup, SidebarItem, SidebarWrapper } from 'flowbite-svelte';
-	import { CogOutline, BookOpenSolid, LifeSaverSolid, QrCodeOutline } from 'flowbite-svelte-icons';
+	import { CogOutline, BookOpenSolid, QrCodeOutline, OpenDoorOutline, BugOutline, GithubSolid } from 'flowbite-svelte-icons';
 
 	export let drawerHidden: boolean = false;
 
@@ -21,20 +21,25 @@
 	});
 
 	let tabs = [
-		{ name: 'QR Scanner', icon: QrCodeOutline, href: '/' },
+		{ name: 'MasquerAge Guard', icon: QrCodeOutline, href: '/' },
 		{ name: 'Profile Settings', icon: CogOutline, href: '/settings' },
 	];
 
 	let misc = [
 		{
-			label: 'Documentation',
-			href: '#',
-			icon: BookOpenSolid
+			label: 'Repository',
+			href: 'https://github.com/ZenoxisIV/MasquerAge-PWA',
+			icon: GithubSolid
 		},
 		{
 			label: 'Support',
 			href: 'https://github.com/ZenoxisIV/MasquerAge-PWA/issues',
-			icon: LifeSaverSolid
+			icon: BugOutline
+		},
+		{
+			label: 'Logout',
+			href: '/logout',
+			icon: OpenDoorOutline
 		}
 	];
 </script>

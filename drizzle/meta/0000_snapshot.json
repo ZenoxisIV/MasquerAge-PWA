@@ -1,9 +1,54 @@
 {
-  "id": "a3597c2c-329e-4ce7-a628-97c9853539b5",
+  "id": "a23919b3-c7c9-497e-a04d-b775b0c8aab5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.sessions": {
+      "name": "sessions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(128)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
+          "tableFrom": "sessions",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.user_demographics": {
       "name": "user_demographics",
       "schema": "",
@@ -11,7 +56,13 @@
         "pcn": {
           "name": "pcn",
           "type": "varchar(19)",
-          "primaryKey": true,
+          "primaryKey": false,
+          "notNull": false
+        },
+        "uin": {
+          "name": "uin",
+          "type": "varchar(10)",
+          "primaryKey": false,
           "notNull": true
         },
         "firstName": {
@@ -70,19 +121,25 @@
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
+        },
+        "photo": {
+          "name": "photo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "user_demographics_pcn_users_pcn_fk": {
-          "name": "user_demographics_pcn_users_pcn_fk",
+        "user_demographics_pcn_users_id_fk": {
+          "name": "user_demographics_pcn_users_id_fk",
           "tableFrom": "user_demographics",
           "tableTo": "users",
           "columnsFrom": [
             "pcn"
           ],
           "columnsTo": [
-            "pcn"
+            "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -98,23 +155,23 @@
       "name": "users",
       "schema": "",
       "columns": {
-        "pcn": {
-          "name": "pcn",
-          "type": "varchar(19)",
+        "id": {
+          "name": "id",
+          "type": "varchar(16)",
           "primaryKey": true,
           "notNull": true
         },
-        "uin": {
-          "name": "uin",
-          "type": "varchar(10)",
+        "pcn": {
+          "name": "pcn",
+          "type": "varchar(30)",
           "primaryKey": false,
           "notNull": true
         },
-        "photo": {
-          "name": "photo",
-          "type": "text",
+        "password_hash": {
+          "name": "password_hash",
+          "type": "varchar(256)",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},

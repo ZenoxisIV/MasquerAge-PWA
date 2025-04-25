@@ -2,25 +2,19 @@
 	import { Label, Input } from 'flowbite-svelte';
 	import Login from './Login.svelte';
 
-	const rememberMe = true;
-	const lostPassword = true;
+	const rememberMe = false;
+	const lostPassword = false;
 	const createAccount = true;
-
-	const onSubmit = (e: Event) => {
-		const formData = new FormData(e.target as HTMLFormElement);
-
-
-	};
 </script>
 
-<Login {rememberMe} {lostPassword} {createAccount} on:submit={onSubmit}>
+<Login {rememberMe} {lostPassword} {createAccount}>
 	<div>
-		<Label for="email" class="mb-2 dark:text-white">Your email</Label>
+		<Label for="email" class="mb-2 dark:text-white">Your username</Label>
 		<Input
-			type="email"
-			name="email"
-			id="email"
-			placeholder="name@company.com"
+			type="text"
+			name="username"
+			id="username"
+			placeholder="AlanTuring"
 			required
 			class="border outline-none dark:border-gray-600 dark:bg-gray-700"
 		/>

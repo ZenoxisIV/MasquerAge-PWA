@@ -11,7 +11,7 @@
 		<Card class="w-full max-w-md" border={false}>
 			<h1 class="mb-3 text-2xl font-bold text-gray-900 dark:text-white">Forgot your password?</h1>
 			<P class="text-base font-normal text-gray-500 dark:text-gray-400">
-				Don"t fret! Just type in your email and we will send you a code to reset your password!
+				Don't fret! Just type in your email and we will send you a code to reset your password!
 			</P>
 			<form class="mt-8 space-y-6" on:submit|preventDefault>
 				<slot />

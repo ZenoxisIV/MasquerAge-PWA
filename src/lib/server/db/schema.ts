@@ -5,13 +5,15 @@ export const maritalStatus = t.pgEnum('maritalStatus', ["Single", "Married", "Di
 export const bloodType = t.pgEnum('bloodType', ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]);
 
 export const usersTable = t.pgTable('users', {
-    pcn: t.varchar("pcn", { length: 19 }).primaryKey(),
-    uin: t.varchar("uin", { length: 10 }).notNull(),
-    photo: t.text("photo")
+    id: t.varchar("id", { length: 16 }).primaryKey(),
+    username: t.varchar("pcn", { length: 30 }).notNull(),
+    password_hash: t.varchar("password_hash", { length: 256 }).notNull()
 });
 
 export const userDemographicsTable = t.pgTable('user_demographics', {
-    pcn: t.varchar("pcn", { length: 19 }).primaryKey().references(() => usersTable.pcn, { onDelete: "cascade" }),
+    id: t.varchar("pcn", { length: 16 }).primaryKey().references(() => usersTable.id, { onDelete: "cascade" }),
+    pcn: t.varchar("pcn", { length: 19 }),
+    uin: t.varchar("uin", { length: 10 }).notNull(),
     firstName: t.varchar("firstName", { length: 256 }).notNull(),
     middleName: t.varchar("middleName", { length: 256 }),
     lastName: t.varchar("lastName", { length: 256 }).notNull(),
@@ -20,5 +22,17 @@ export const userDemographicsTable = t.pgTable('user_demographics', {
     maritalStatus: maritalStatus(),
     bloodType: bloodType(),
     dateOfBirth: t.date().notNull(),
-    placeOfBirth: t.varchar("placeOfBirth", { length: 256 }).notNull()
+    placeOfBirth: t.varchar("placeOfBirth", { length: 256 }).notNull(),
+    photo: t.text("photo")
+});
+
+export const sessionsTable = t.pgTable('sessions', {
+    id: t.varchar("id", { length: 128 }).primaryKey(),
+    expiresAt: t.timestamp('expires_at', { 
+        withTimezone: true,
+        mode: "date"
+    }).notNull(),
+    user_id: t.text('user_id')
+        .notNull()
+        .references(() => usersTable.id),
 });

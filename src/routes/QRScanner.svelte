@@ -1,106 +1,90 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { stream, error, status } from './stores.js';
+    import QRBorder from '$lib/qr-components/QRBorder.svelte';
 	import jsQR from 'jsqr';
 
-	import QRBorder from '$lib/qr-components/QRBorder.svelte';
-	import QRData from '$lib/qr-components/QRData.svelte';
-	import UserMedia from '$lib/qr-components/use-usermedia.svelte';
+    interface Props {
+        /** @return {(result: string): void} callback - consumes a JSON string containing QR code data */
+        onScan: (result: string) => void,
+        /** @param {boolean} active - flag if scanner should be active or not. */
+        active?: boolean
+    }
 
-	export let result: string | null = null;
-	export let stopMediaStream: (() => void) | null = null;
+    let { onScan, active = true }: Props = $props();
 
-	interface UserMediaHandlers {
-  		stopMediaStream: () => void;
-  		startMediaStream: () => void;
-	}
-
-	let startMediaStream: (() => void) | null = null;
-
-	$: active = !result;
-
-	let video: HTMLVideoElement | null = null;
-	let canvas: HTMLCanvasElement | null = null;
-	let useUserMedia: () => UserMediaHandlers;
-
-	let rootElement: HTMLDivElement | null = null;
+	let canvas: HTMLCanvasElement;
+    let video: HTMLVideoElement;
 
 	onMount(() => {
-		const handlers = useUserMedia();
-		stopMediaStream = handlers.stopMediaStream;
-		startMediaStream = handlers.startMediaStream;
-	});
+        canvas = document.createElement('canvas');
+        video.setAttribute('playsinline', 'true'); // tell iOS we don't want fullscreen
+        startMedia();
+    });
 
-	const startCapturing = (): void => {
-		if (!canvas || !video) return;
+    $effect(() => {
+        if (active && !video.srcObject)
+            startMedia();
+    })
 
-		const context = canvas.getContext('2d');
-		if (!context) return;
+    const startMedia = () => {
+        navigator.mediaDevices
+            .getUserMedia({
+                video: { facingMode: 'environment' }
+            })
+            .then(stream => {
+                video.srcObject = stream;
+                video.play().catch(console.error);
+            })
+            .catch(console.error);
+    }
 
-		const { width, height } = canvas;
-		context.drawImage(video, 0, 0, width, height);
+    const stopMedia = () => {
+        const stream = video.srcObject as MediaStream;
+        stream.getTracks().forEach(track => {
+            track.stop();
+            stream.removeTrack(track);
+        });
 
-		const imageData = context.getImageData(0, 0, width, height);
-		const qrCode = jsQR(imageData.data, width, height);
+        video.srcObject = null;
+    }
 
-		if (qrCode === null) {
-			setTimeout(startCapturing, 750);
-		} else {
-			result = qrCode.data;
+    const handleCanPlay = () => {
+        canvas.height = video.videoHeight;
+        canvas.width = video.videoWidth;
+        requestAnimationFrame(draw);
+    }
 
-			if (rootElement) {
-				rootElement.dispatchEvent(new CustomEvent('successfulScan', { detail: qrCode.data }));
-			}
+    const draw = () => {
+        const ctx = canvas.getContext('2d', {
+            alpha: false,
+            willReadFrequently: true,
+        });
+        if (!ctx) return;
 
-			stopMediaStream?.();
-			if (video) {
-				video.srcObject = null;
-			}
-		}
-	};
+        const { width, height } = canvas;
+        ctx.drawImage(video, 0, 0, width, height);
 
-	const handleCanPlay = (): void => {
-		if (!canvas || !video) return;
+        const imageData = ctx.getImageData(0, 0, width, height);
+        const qr = jsQR(imageData.data, width, height);
 
-		canvas.width = video.videoWidth;
-		canvas.height = video.videoHeight;
+        if (qr) {
+            onScan(qr.data);
+            stopMedia()
+            return;
+        }
 
-		if ($error !== null) {
-			console.error($error);
-		} else {
-			startCapturing();
-		}
-	};
-
-	$: if ($status === 'resolved' && video !== null && $stream) {
-		video.srcObject = $stream;
-		video.play().catch(console.error);
-	}
-
-	$: if (active && $status === 'stopped' && startMediaStream) {
-		startMediaStream();
-	}
+        requestAnimationFrame(draw);
+    }
 </script>
 
-<UserMedia bind:useUserMedia />
-
-<div bind:this={rootElement} class={`relative w-full max-w-[500px]`}>
+<div class={`relative w-full max-w-[500px]`}>
 	<div class="relative overflow-hidden pb-[100%] rounded-[10%]">
-		<canvas bind:this={canvas} class="hidden"></canvas>
-		<!-- svelte-ignore a11y-media-has-caption -->
+		<!-- svelte-ignore a11y_media_has_caption -->
 		<video 
 			bind:this={video} 
-			on:canplay={handleCanPlay} 
+            oncanplay={handleCanPlay}
 			class="absolute top-0 left-0 w-full h-full rounded-[10%] object-cover outline-none transform scale-x-[-1]"
 		></video>
 		<QRBorder />
 	</div>
 </div>
-
-<slot {result}>
-	<QRData decodedData={result as string} onNewScan={() => (result = null)} />
-</slot>
-
-<style>
-
-</style>

@@ -3,14 +3,16 @@
 import 'vite-plugin-pwa/info';
 import 'vite-plugin-pwa/vanillajs';
 
+import type { Session } from "lucia";
+
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface PageState {}
-		// interface Platform {}
+		interface Locals {
+			session: Session | null;
+			user: User | null;
+		}
 	}
 }
+
 
 export {};

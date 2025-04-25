@@ -2,25 +2,18 @@
 	import { Label, Input } from 'flowbite-svelte';
 	import Register from './Register.svelte';
 
-	const acceptTerms = true;
+	const acceptTerms = false;
 	const haveAccount = true;
-	
-	const onSubmit = (e: Event) => {
-		const formData = new FormData(e.target as HTMLFormElement);
-
-
-	
-	};
 </script>
 
-<Register {acceptTerms} {haveAccount} on:submit={onSubmit}>
+<Register {acceptTerms} {haveAccount}>
 	<div>
 		<Label class='space-y-2 dark:text-white'>
-			<span>Your email</span>
+			<span>Your username</span>
 			<Input
-				type="email"
-				name="email"
-				placeholder="name@company.com"
+				type="text"
+				name="username"
+				placeholder="AlanTuring"
 				required
 				class="border outline-none dark:border-gray-600 dark:bg-gray-700"
 			/>

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { A, Checkbox, Button, Card } from 'flowbite-svelte';
 	
 	export let acceptTerms: boolean = true;
@@ -15,7 +16,8 @@
 			<h1 class="text-2xl font-bold text-gray-900 dark:text-white">
 				Create a Free Account
 			</h1>
-			<form class="mt-8 space-y-6" on:submit|preventDefault>
+			<form ></form>
+			<form class="mt-8 space-y-6" method="POST" use:enhance>
 				<slot />
 				{#if acceptTerms}
 					<Checkbox class="pt-1" name="accept">
@@ -27,7 +29,7 @@
 				<Button type="submit" size="lg">Create account</Button>
 				{#if haveAccount}
 					<div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-						Already have an account? <A href="/auth/login">Login here</A>
+						Already have an account? <A href="/login">Login here</A>
 					</div>
 				{/if}
 			</form>

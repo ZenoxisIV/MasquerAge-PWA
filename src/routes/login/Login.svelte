@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { Checkbox, A, Button, Card } from 'flowbite-svelte';
 	
 	export let rememberMe = true;
@@ -14,9 +15,9 @@
 		</a>
 		<Card class="w-full" size="md" border={false}>
 			<h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-				Sign in to platform
+			Sign in to platform
 			</h1>
-			<form class="mt-8 space-y-6" on:submit|preventDefault>
+			<form class="mt-8 space-y-6" method="POST" use:enhance>
 				<slot />
 				{#if rememberMe || lostPassword}
 					<div class="flex items-start">
@@ -24,14 +25,14 @@
 							<Checkbox class="accent-primary-600" name="remember">Remember me</Checkbox>
 						{/if}
 						{#if lostPassword}
-							<A href="/auth/forgot-password" aClass="ml-auto text-sm">Lost Password?</A>
+							<A href="/forgot-password" aClass="ml-auto text-sm">Lost Password?</A>
 						{/if}
 					</div>
 				{/if}
 				<Button type="submit" size="lg">Login to your account</Button>
 				{#if createAccount}
 					<div class="text-sm font-medium text-gray-500 dark:text-gray-400">
-						Not registered? <A href="/auth/register">Create account</A>
+						Not registered? <A href="/register">Create account</A>
 					</div>
 				{/if}
 			</form>
