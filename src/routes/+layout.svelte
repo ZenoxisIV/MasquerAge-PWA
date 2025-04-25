@@ -28,7 +28,7 @@
 
 	let drawerHidden = $derived(false);
 	let { children } = $props();
-	const excludedPaths = ['/login', '/register', '/reset', '/forgot-password'];
+	const excludedPaths = ['/login', '/register'];
 </script>
 
 <svelte:head>
