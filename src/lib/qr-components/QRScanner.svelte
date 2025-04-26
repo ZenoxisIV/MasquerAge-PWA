@@ -17,7 +17,6 @@
 
 	onMount(() => {
         canvas = document.createElement('canvas');
-        video.load();
         video.setAttribute('playsinline', 'true'); // tell iOS we don't want fullscreen
         startMedia();
 
@@ -74,7 +73,7 @@
         const imageData = ctx.getImageData(0, 0, width, height);
         const qr = jsQR(imageData.data, width, height);
 
-        if (qr) {
+        if (qr?.data) {
             onScan(qr.data);
             stopMedia()
             return;
