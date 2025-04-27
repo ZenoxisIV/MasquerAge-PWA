@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import logo from '$lib/images/MasquerAge.png';
+	import { page } from '$app/state';
+	import logo from '$lib/images/carnival-mask.png';
 	import { Navbar, NavBrand, NavLi, NavUl, NavHamburger } from 'flowbite-svelte';
 	
-	$: activeUrl = $page.url.pathname;
+	$: activeUrl = page.url.pathname;
 </script>
   
 <Navbar class="bg-primary-50 dark:bg-[#0f1c24] shadow-md">
