@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button, Modal } from 'flowbite-svelte';
-	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid, QuestionCircleOutline } from 'flowbite-svelte-icons';
+	import { Button, Modal, Spinner } from 'flowbite-svelte';
+	import { CheckCircleSolid, CloseCircleSolid, ExclamationCircleSolid, QuestionCircleOutline, TruckOutline } from 'flowbite-svelte-icons';
 	import QRScanner from '$lib/qr-components/QRScanner.svelte';
 
 	let { data } = $props();
@@ -9,6 +9,8 @@
 
 	let isOpenConfModal = $state(false);
 	let isOpenAuthModal = $state(false);
+	let isVerifying = $state(false);
+
 	let isValidSession = $state(true);
 	let result: { isAdult?: boolean; photo?: string } = $state({});
 
@@ -44,7 +46,7 @@
 	const pcn = '1128-4572-2969-9457';
     const dob = '1985/04/29';
 	async function authID() {
-		isOpenConfModal = false;
+		isVerifying = true;
 		try {
 			const response = await fetch(`/api/scan/${sessionId}`, {
 				method: 'PATCH',
@@ -62,6 +64,8 @@
 			isValidSession = false;
 		}
 
+		isVerifying = false;
+		isOpenConfModal = false;
 		isOpenAuthModal = true;
 		countdown.start(5, () => {
 			if (isOpenAuthModal) isOpenAuthModal = false;
@@ -109,7 +113,9 @@
 		</div>
 		<div class="text-center">
 			<Button color="alternative" class="me-2 text-md" onclick={() => isOpenConfModal = false}>No, cancel</Button>
-			<Button color="red" class="text-md" onclick={() => authID()}>Yes, I'm sure</Button>
+			<Button disabled={isVerifying} color="red" class="text-md" onclick={() => authID()}>
+				{#if isVerifying}<Spinner class="me-2" color="blue" size={4}/>{/if} Yes, I'm sure
+			</Button>
 		</div>
 		<div class="flex items-baseline text-xs font-normal text-gray-500 hover:underline dark:text-gray-400">
 			<QuestionCircleOutline class="inline w-3 h-3 me-1" />

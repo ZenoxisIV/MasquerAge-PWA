@@ -3,7 +3,7 @@ import { fileURLToPath } from 'url';
 import { json, type RequestHandler } from "@sveltejs/kit";
 import { eq } from "drizzle-orm";
 import { db } from "$lib/server/db/index";
-import { usersTable, ageSessionsTable } from "$lib/server/db/schema";
+import { usersTable, ageSessionsTable, userDemographicsTable } from "$lib/server/db/schema";
 import pino from "pino";
 import { produce } from 'sveltekit-sse';
 import { FASTAPI_URL } from '$env/static/private';
@@ -85,7 +85,7 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
         return json({ error: "Invalid session" }, { status: 400 });
 
     const { pcn, dob } = await request.json(); // photo?
-    const uin = await getUIN(pcn);
+    const { uin, photo } = await getNeonData(pcn);
     if (!uin) {
         emitter('message', JSON.stringify({ error: "Invalid ID" }));
         return json({ error: "Invalid session" }, { status: 400 });
@@ -118,7 +118,7 @@ export const PATCH: RequestHandler = async ({ request, params }) => {
     const datedob = new Date(dob);
     const isAdult = datedob.setFullYear(datedob.getFullYear() + 35) < Date.now();
 
-    const body = { isAdult } // include photo?
+    const body = { isAdult, photo }
     emitter('message', JSON.stringify(body));
 
     db.delete(ageSessionsTable)
@@ -155,20 +155,20 @@ async function invalidateSession (authSessionId: string) {
     return true;
 }
 
-async function getUIN (pcn: string) {
-    let uin: string = '';
+async function getNeonData (pcn: string) {
+    let uin = '', photo = '' as string | null;
     try {
-        const queryResult = await db
-            .select({ uin: usersTable.uin })
+        const queryResult =  await db
+            .select({ uin: usersTable.uin, photo: usersTable.photo })
             .from(usersTable)
+            .innerJoin(userDemographicsTable, eq(usersTable.pcn, userDemographicsTable.pcn))
             .where(eq(usersTable.pcn, pcn));
-
         if (queryResult.length !== 1)
             throw new Error('Invalid DB query');
 
-        ({ uin } = queryResult[0]);
+        ({ uin, photo } = queryResult[0]);
     } catch (error) { // neon db fail
         console.log(error);
     }
-    return uin;
+    return { uin, photo };
 }
