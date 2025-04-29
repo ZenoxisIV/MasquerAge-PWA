@@ -6,7 +6,7 @@ export const bloodType = t.pgEnum('bloodType', ["A+", "A-", "B+", "B-", "AB+", "
 
 export const usersTable = t.pgTable('users', {
     id: t.varchar("id", { length: 16 }).primaryKey(),
-    username: t.varchar("pcn", { length: 30 }).notNull(),
+    username: t.varchar("username", { length: 30 }).notNull(),
     password_hash: t.varchar("password_hash", { length: 256 }).notNull()
 });
 

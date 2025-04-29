@@ -24,7 +24,7 @@ CREATE TABLE "user_demographics" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" varchar(16) PRIMARY KEY NOT NULL,
-	"pcn" varchar(30) NOT NULL,
+	"username" varchar(30) NOT NULL,
 	"password_hash" varchar(256) NOT NULL
 );
 --> statement-breakpoint
