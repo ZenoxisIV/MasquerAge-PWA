@@ -33,7 +33,7 @@ export const actions: Actions = {
         const existingUser = await db
             .select({ id: usersTable.id, username: usersTable.username, password_hash: usersTable.password_hash })
             .from(usersTable)
-            .where(eq(usersTable.username, username.toLowerCase()))
+            .where(eq(usersTable.username, username))
             .catch((err: unknown) => {
                 throw new Error("Database query failed");
         	});
