@@ -22,7 +22,7 @@
 
 	let tabs = [
 		{ name: 'MasquerAge Guard', icon: QrCodeOutline, href: '/' },
-		{ name: 'Profile Settings', icon: CogOutline, href: '/settings' },
+		{ name: 'Profile Settings', icon: CogOutline, href: '/profile' },
 	];
 
 	let misc = [
