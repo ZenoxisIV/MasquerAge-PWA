@@ -1,5 +1,5 @@
 <script>
-	import logo from '$lib/images/MasquerAge.png';
+	import logo from '$lib/images/MasquerAge-512x512.png';
 	import { DarkMode, Dropdown, DropdownItem, NavBrand, NavHamburger, NavLi, NavUl, Navbar } from 'flowbite-svelte';
 	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 	import '../app.css';
